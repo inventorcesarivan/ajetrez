@@ -85,6 +85,14 @@ body{margin:0; font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto
   #rowControls{ left:12px; right:12px; transform:none; }
   
 }
+/* Piezas como SVG: tamaño relativo a la casilla */
+.piece-svg { width: 96%; height: 96%; display:block; pointer-events:none; 
+  vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
+.piece-svg.white { fill: #ffffff; stroke: #111111; stroke-width: 2; }
+.piece-svg.black { fill: #111111; stroke: #111111; stroke-width: 2; }
+.piece-svg.white { fill: #ffffff; stroke: #111111; stroke-width: 2; }
+.piece-svg.black { fill: #111111; stroke: #111111; stroke-width: 2; }
+
 </style>
 <style>
 /* 20% más chico el panel del instructivo */
@@ -249,7 +257,49 @@ body{margin:0; font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto
   }
 }
 </style>
-</head>
+<style>
+/* === Ajetrez: UI states for illegal shift === */
+.btn.blocked{background:#d33;color:#fff;border-color:#a00;cursor:not-allowed;opacity:.95}
+#rule-toast.toast{position:fixed;left:50%;top:12%;transform:translateX(-50%);background:rgba(200,0,0,.92);color:#fff;padding:10px 14px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.35);font-weight:700;max-width:min(92vw,560px);text-align:center;transition:opacity .35s z-index:9999;}
+</style>
+
+
+
+<style id="mode-indicator-style">
+.mode-inline{ display:inline-flex; align-items:center; gap:8px; margin-left:8px; }
+.mode-pill{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:6px 10px; border-radius:999px;
+  background:#000; color:#fff;
+  font-size:15px; font-weight:800; line-height:1;
+}
+.mode-pill-label{ opacity:.9; }
+.mode-pill-current{ opacity:1; }
+@media (max-width: 640px){
+  .mode-pill{ font-size:14px; }
+}
+</style>
+
+
+<style>
+.piece-img{width:96%;height:96%;display:block;pointer-events:none;user-select:none;
+  image-rendering:auto;filter:drop-shadow(0 1.2px 1.6px rgba(0,0,0,.35));}
+</style></head>
+<script>const PIECE_SPRITES = {
+  "b_R": "assets/piezas/b_R.png",
+  "b_N": "assets/piezas/b_N.png",
+  "b_B": "assets/piezas/b_B.png",
+  "b_Q": "assets/piezas/b_Q.png",
+  "b_K": "assets/piezas/b_K.png",
+  "b_P": "assets/piezas/b_P.png",
+  "w_R": "assets/piezas/w_R.png",
+  "w_N": "assets/piezas/w_N.png",
+  "w_B": "assets/piezas/w_B.png",
+  "w_Q": "assets/piezas/w_Q.png",
+  "w_K": "assets/piezas/w_K.png",
+  "w_P": "assets/piezas/w_P.png"
+};</script>
+
 <body>
 <div class="container">
 <div class="frame">
@@ -280,16 +330,18 @@ body{margin:0; font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto
 
   function makePiece(t,c){ return {type:t,color:c,hasMoved:false}; }
   function makeInitialBoard16x8(){
-    const b=Array.from({length:8},()=>Array(16).fill(EMPTY));
-    const back=["R","N","B","Q","K","B","N","R"];
-    const row=back.concat(back);
-    const pawns=Array(16).fill("P");
-    b[0]=row.map(t=>makePiece(t,'w'));
-    b[1]=pawns.map(()=>makePiece('P','w'));
-    b[6]=pawns.map(()=>makePiece('P','b'));
-    b[7]=row.map(t=>makePiece(t,'b'));
-    return b;
-  }
+  const b=Array.from({length:8},()=>Array(16).fill(EMPTY));
+  const back=["R","N","B","Q","K","B","N","R"];
+  const row=back.concat(back);
+  const pawns=Array(16).fill("P");
+  // Negras arriba
+  b[0]=row.map(t=>makePiece(t,'b'));
+  b[1]=pawns.map(()=>makePiece('P','b'));
+  // Blancas abajo
+  b[6]=pawns.map(()=>makePiece('P','w'));
+  b[7]=row.map(t=>makePiece(t,'w'));
+  return b;
+}
   const initialOffsets=[8,8,8,8,0,0,0,0];
 
   // ---- Estado ----
@@ -299,9 +351,11 @@ body{margin:0; font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto
   let sel=null;
   let moves=[];
   let msg='Blancas mueven';
-  let pendingShift=null; // {row, who}
+  let pendingShift=null; 
+let pendingShiftFree = false;
+// {row, who}
   let epTarget=null;
-  let mode='1v1'; // '1v1' | 'bot'
+  let mode='bot'; // '1v1' | 'bot'
   let botSide='b'; // b = vos blancas, bot negras
   let botLog=[];
   let showTips=true;
@@ -348,10 +402,10 @@ body{margin:0; font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto
       const dirs=[]; if(p.type!=='B') dirs.push([1,0],[-1,0],[0,1],[0,-1]); if(p.type!=='R') dirs.push([1,1],[1,-1],[-1,1],[-1,-1]);
       for(const [dr,dc] of dirs){ let rr=r+dr,cc=c+dc; while(inside(rr,cc)){ const t=vis[rr][cc]; if(!t) out.push([rr,cc]); else { if(t.color!==p.color) out.push([rr,cc]); break; } rr+=dr; cc+=dc; } }
     } else if(p.type==='P'){
-      const dir=p.color==='w'?1:-1; const r1=r+dir;
+      const dir = p.color==='w'?-1:1; const r1=r+dir;
       if(inside(r1,c)&&!vis[r1][c]) out.push([r1,c]);
       [[r1,c-1],[r1,c+1]].forEach(([rr,cc])=>{ if(inside(rr,cc)&&vis[rr][cc]&&vis[rr][cc].color!==p.color) out.push([rr,cc]); });
-      const start=p.color==='w'?1:6; const r2=r+2*dir, between=r+dir;
+      const start = p.color==='w'?6:1; const r2=r+2*dir, between=r+dir;
       if(r===start && inside(r2,c) && !vis[between][c] && !vis[r2][c]) out.push([r2,c]);
     }
     return out;
@@ -425,7 +479,7 @@ function inCheck(vis,color){ const k=findKing(vis,color); if(!k) return false; c
     let moved=copy[from.r][fromBC];
 
     if(special&&special.enPassant){
-      const dir=moved.color==='w'?1:-1; const capR=to.r-dir; const capBC=toBaseCol(to.c,capR,offs);
+      const dir=moved.color==='w'?-1:1; const capR=to.r-dir; const capBC=toBaseCol(to.c,capR,offs);
       captured=copy[capR][capBC]; copy[capR][capBC]=EMPTY;
     }
 
@@ -462,7 +516,7 @@ function inCheck(vis,color){ const k=findKing(vis,color); if(!k) return false; c
   let special=null;
   // EN PASSANT (si corresponde)
   if(piece.type==='P' && epTarget && rr===epTarget.r && cc===epTarget.c){
-    const dir=piece.color==='w'?1:-1;
+    const dir=piece.color==='w'?-1:1;
     if(r===(epTarget.r - dir) && Math.abs(cc-c)===1) special={enPassant:true};
   }
 
@@ -472,7 +526,7 @@ function inCheck(vis,color){ const k=findKing(vis,color); if(!k) return false; c
 }
         // APPEND_EN_PASSANT: añadir movimiento e.p. aunque la casilla destino esté vacía
     if(piece.type==='P' && epTarget){
-      const dir = piece.color==='w' ? 1 : -1;
+      const dir = piece.color==='w'?-1:1;
       const cand = [[r+dir, c-1], [r+dir, c+1]];
       for(const [er, ec] of cand){
         if(er===epTarget.r && ec===epTarget.c){
@@ -542,7 +596,7 @@ function inCheck(vis,color){ const k=findKing(vis,color); if(!k) return false; c
     let moved=copy[from.r][fromBC];
 
     if(special&&special.enPassant){
-      const dir=moved.color==='w'?1:-1; const capR=to.r-dir; const capBC=toBaseCol(to.c,capR,offs);
+      const dir=moved.color==='w'?-1:1; const capR=to.r-dir; const capBC=toBaseCol(to.c,capR,offs);
       captured=copy[capR][capBC]; copy[capR][capBC]=EMPTY;
     }
 
@@ -582,7 +636,7 @@ function inCheck(vis,color){ const k=findKing(vis,color); if(!k) return false; c
     for(const [rr,cc] of pseudo){
       let special=null;
       if(piece.type==='P' && epTarget && rr===epTarget.r && cc===epTarget.c){
-        const dir=piece.color==='w'?1:-1;
+        const dir=piece.color==='w'?-1:1;
         if(r===(epTarget.r - dir) && Math.abs(cc-c)===1) special={enPassant:true};
       }
       const {board:b2,captured}=applyMove(board,offs,{r,c},{r:rr,c:cc},special);
@@ -591,7 +645,7 @@ function inCheck(vis,color){ const k=findKing(vis,color); if(!k) return false; c
     }
         // APPEND_EN_PASSANT: añadir movimiento e.p. aunque la casilla destino esté vacía
     if(piece.type==='P' && epTarget){
-      const dir = piece.color==='w' ? 1 : -1;
+      const dir = piece.color==='w'?-1:1;
       const cand = [[r+dir, c-1], [r+dir, c+1]];
       for(const [er, ec] of cand){
         if(er===epTarget.r && ec===epTarget.c){
@@ -726,29 +780,54 @@ function inCheck(vis,color){ const k=findKing(vis,color); if(!k) return false; c
 
   function renderToolbar(){
     toolbar.innerHTML='';
-    const segMode=document.createElement('div'); segMode.className='seg';
-    const b1=document.createElement('button'); b1.textContent='1v1 local'; if(mode==='1v1') b1.classList.add('active');
-    b1.onclick=()=>{ mode='1v1'; resetAll(); render(); };
-    const b2=document.createElement('button'); b2.textContent='vs Bot'; if(mode==='bot') b2.classList.add('active');
-    b2.onclick=()=>{ mode='bot'; botSide='b'; resetAll(); render(); };
-    segMode.append(b1,b2); toolbar.append(segMode);
 
-    if(false && mode==='bot'){
-      const segSide=document.createElement('div'); segSide.className='seg';
-      const s1=document.createElement('button'); s1.textContent='Yo Blancas'; if(botSide==='b') s1.classList.add('active');
-      s1.onclick=()=>{ botSide='b'; resetAll(); render(); };
-      const s2=document.createElement('button'); s2.textContent='Yo Negras'; if(botSide==='w') s2.classList.add('active');
-      s2.onclick=()=>{ botSide='w'; resetAll(); render(); };
-      segSide.style.marginLeft='8px'; segSide.append(s1,s2); toolbar.append(segSide);
-    }
+    // Botón existente: Mostrar/Ocultar instructivo
+    const toggle = document.createElement('div');
+    toggle.className = 'seg';
+    const tg = document.createElement('button');
+    tg.textContent = showTips ? 'Ocultar instructivo' : 'Mostrar instructivo';
+    tg.onclick = () => { showTips = !showTips; render(); };
+    toggle.append(tg);
+    toolbar.append(toggle);
 
-    const toggle=document.createElement('div'); toggle.className='seg'; toggle.style.marginLeft='8px';
-    const tg=document.createElement('button'); tg.textContent=showTips?'Ocultar instructivo':'Mostrar instructivo';
-    tg.onclick=()=>{ showTips=!showTips; render(); };
-    toggle.append(tg); toolbar.append(toggle);
-  }
+    // Indicador + botón de cambio a la derecha
+    const modeSeg = document.createElement('div');
+    modeSeg.className = 'seg mode-inline';
 
-  function renderBoard(){
+    // Pills: "Estás en modo: <current>"
+    const currentText = (mode === 'bot') ? 'vs Bot' : '1v1 local';
+    const pill = document.createElement('div');
+    pill.className = 'mode-pill';
+    pill.innerHTML = `<span class="mode-pill-label">Estás en modo:</span> <span class="mode-pill-current">${currentText}</span>`;
+
+    // Botón para alternar
+    const btn = document.createElement('button');
+    btn.className = 'mode-switch';
+    btn.textContent = (mode === 'bot') ? 'Cambiar a 1v1 local' : 'Cambiar a vs Bot';
+    btn.onclick = () => {
+      mode = (mode === 'bot') ? '1v1' : 'bot';
+      if(mode === 'bot'){ botSide = 'b'; }
+      resetAll();
+      render();
+    };
+
+    modeSeg.append(pill, btn);
+    toolbar.append(modeSeg);
+}
+
+  
+
+
+// ==== SVG de piezas (versión estilizada ++ con más curvas) ====
+
+function pieceSvg(type, color){
+  // Return an IMG that points to the exact sprite cropped from the user's reference
+  const key = (color==='w' ? 'w_' : 'b_') + type;
+  const src = PIECE_SPRITES[key];
+  if(!src) return '';
+  return `<img class="piece-img" alt="${color}${type}" src="${src}" />`;
+}
+function renderBoard(){
     const vis=buildVisible(board,offsets);
     const opp=turn==='w'?'b':'w';
     const oppInCheck=inCheck(vis,turn);
@@ -769,7 +848,11 @@ function inCheck(vis,color){ const k=findKing(vis,color); if(!k) return false; c
         const btn=document.createElement('button');
         btn.className='square '+(isCell?(((r+bc)%2===1)?'dark':'light'):'inactive');
         const span=document.createElement('span');
-        if(isCell){ const p=board[r][bc]; span.textContent=p?PIECES[p.color][p.type]:''; } else { span.textContent=''; }
+        if(isCell){
+            const p=board[r][bc];
+            if(p){ span.innerHTML = pieceSvg(p.type, p.color); }
+            else { span.textContent=''; }
+          } else { span.textContent=''; }
         btn.append(span);
         if(inCentral && sel && sel.r===r && (d-8)===sel.c) btn.classList.add('sel');
         if(inCentral && moves.some(([rr,cc])=>rr===r && cc===(d-8))) btn.classList.add('move');
@@ -807,29 +890,31 @@ function renderRowControls(){
 
     // Buttons
     if(off===8){
-      const isPreview = pendingShiftPreview && pendingShiftPreview.row===r && pendingShiftPreview.action==='right';
-      const bR=document.createElement('button'); bR.className='btn';
-      bR.textContent = isPreview ? 'Confirmar desplazamiento' : 'Desplazar sección';
-      bR.onclick=()=>{
-        if(pendingShiftPreview && pendingShiftPreview.row===r && pendingShiftPreview.action==='right'){
-          pendingShiftPreview=null; shiftRow(r,'right');
-        } else {
-          setPreview('right');
-        }
-      };
+  const isPreview = pendingShiftPreview && pendingShiftPreview.row===r && pendingShiftPreview.action==='right';
+  const bR=document.createElement('button'); bR.className='btn';
+  bR.textContent = isPreview ? 'Confirmar desplazamiento' : 'Desplazar sección';
+  const isLegal = window.canShiftSection ? window.canShiftSection(r,'right') : true;
+  if(!isLegal){ bR.classList.add('blocked'); bR.title='Bloqueado por regla: el 8×8 central no puede quedar sin rey.'; bR.onclick=()=>{ try{ window.showRuleToast(); }catch(_){}; }; }
+  else { bR.onclick=()=>{
+    if(pendingShiftPreview && pendingShiftPreview.row===r && pendingShiftPreview.action==='right'){
+      pendingShiftPreview=null; shiftRow(r,'right');
+    } else { setPreview('right'); }
+  }; }
+
       line.append(bR);
     }
     if(off===0){
-      const isPreview = pendingShiftPreview && pendingShiftPreview.row===r && pendingShiftPreview.action==='left';
-      const bL=document.createElement('button'); bL.className='btn';
-      bL.textContent = isPreview ? 'Confirmar desplazamiento' : 'Desplazar sección';
-      bL.onclick=()=>{
-        if(pendingShiftPreview && pendingShiftPreview.row===r && pendingShiftPreview.action==='left'){
-          pendingShiftPreview=null; shiftRow(r,'left');
-        } else {
-          setPreview('left');
-        }
-      };
+  const isPreview = pendingShiftPreview && pendingShiftPreview.row===r && pendingShiftPreview.action==='left';
+  const bL=document.createElement('button'); bL.className='btn';
+  bL.textContent = isPreview ? 'Confirmar desplazamiento' : 'Desplazar sección';
+  const isLegal = window.canShiftSection ? window.canShiftSection(r,'left') : true;
+  if(!isLegal){ bL.classList.add('blocked'); bL.title='Bloqueado por regla: el 8×8 central no puede quedar sin rey.'; bL.onclick=()=>{ try{ window.showRuleToast(); }catch(_){}; }; }
+  else { bL.onclick=()=>{
+    if(pendingShiftPreview && pendingShiftPreview.row===r && pendingShiftPreview.action==='left'){
+      pendingShiftPreview=null; shiftRow(r,'left');
+    } else { setPreview('left'); }
+  }; }
+
       line.append(bL);
     }
     const keepPreview = pendingShiftPreview && pendingShiftPreview.row===r && pendingShiftPreview.action==='keep';
@@ -926,7 +1011,7 @@ function renderRowControls(){
   // ---- Interacción ----
   function handleClick(r,d){
     if(gameOver || reviewing) return;
-    if(d<8||d>15||pendingShift) return;
+    if(d<8||d>15||pendingShift||pendingShiftFree) return;
     if(mode==='bot' && turn===botSide) return;
     const c=d-8;
     const vis=buildVisible(board,offsets);
@@ -936,7 +1021,10 @@ function renderRowControls(){
       if(!found){ if(p && p.color===turn){ selectSquare(r,c); } else { sel=null; moves=[]; msg=(turn==='w'?'Blancas':'Negras')+' mueven'; } render(); return; }
       const from=sel; const special=found[2]||null; const capturesKing=found[3]===true;
       let {board:newBoard,captured,movedPiece}=applyMove(board,offsets,from,{r,c},special);
-      const lastRank=movedPiece.color==='w'?7:0; const bc=toBaseCol(c,r,offsets);
+// SFX hook (human move)
+try{ if(typeof captured!=='undefined' && captured){ AJ_SFX.playCapture(); } else { AJ_SFX.playMove(); } }catch(_){ AJ_SFX && AJ_SFX.playMove && AJ_SFX.playMove(); }
+      try{ lastHumanMove = { from: {r: from.r, c: from.c}, to: {r, c} }; }catch(_){};
+const lastRank=movedPiece.color==='w'?7:0; const bc=toBaseCol(c,r,offsets);
       let promo=false;
       if(movedPiece.type==='P' && r===lastRank){ const copy=cloneB(newBoard); copy[r][bc]={type:'Q',color:movedPiece.color,hasMoved:true}; newBoard=copy; promo=true; }
       // Texto jugada
@@ -985,7 +1073,13 @@ function renderRowControls(){
     if(gameOver || reviewing) return;
     if(!pendingShift || row!==pendingShift.row || (mode==='bot' && turn===botSide)) return;
     const target=(side==='left')?8:0;
-    const newOff=offsets.slice(); newOff[row]=target; offsets=newOff;
+        // Chequeo de legalidad por reyes en juego
+    try{
+      if(!(window.AJ_RULES && window.AJ_RULES.legalShift(row, target, board, offsets))){ msg = 'No se puede sacar al último rey del sector jugable.'; try{ if(window.showRuleToast) window.showRuleToast(msg); }catch(_){ } render(); return; }
+    }catch(_){ }
+const newOff=offsets.slice(); newOff[row]=target; offsets=newOff;
+// SFX shift
+try{ AJ_SFX.playShift(); }catch(_){}
     const shiftText = `shift fila ${row+1} → ${target===8?'tope izq.':'tope der.'}`;
     snapshot(shiftText);
     endShift();
@@ -1005,6 +1099,34 @@ function renderRowControls(){
   }
   function hideOverlay(){ document.getElementById('overlay').style.display='none'; }
 
+// === Ajetrez: helper para avisos de regla y chequeo de legalidad ===
+(function(){
+  let _tHandle=null;
+  window.showRuleToast = function(msg){
+    var el=document.getElementById('rule-toast');
+    if(!el){ el=document.createElement('div'); el.id='rule-toast'; el.className='toast';
+      var fs=document.fullscreenElement||document.webkitFullscreenElement; (fs||document.body).appendChild(el); }
+    else {
+      var fs=document.fullscreenElement||document.webkitFullscreenElement; if(fs && !fs.contains(el)) fs.appendChild(el); if(!fs && el.parentNode!==document.body) document.body.appendChild(el);
+    }
+    el.textContent = msg || 'No se puede desplazar la sección: el 8×8 central no puede quedar sin rey de alguno de los jugadores.';
+    el.style.display='block'; el.style.opacity='1';
+    if(_tHandle) clearTimeout(_tHandle);
+    _tHandle = setTimeout(function(){ el.style.opacity='0'; setTimeout(function(){ el.style.display='none'; }, 420); }, 4200);
+  };
+  window.canShiftSection = function(row, action){
+    // action: 'left' => target 8; 'right' => target 0
+    var target = (action==='left')?8:0;
+    try{
+      if(window.AJ_RULES && typeof window.AJ_RULES.legalShift==='function'){
+        return !!window.AJ_RULES.legalShift(row, target, board, offsets);
+      }
+    }catch(e){}
+    return true; // si no hay regla presente, no bloquear
+  };
+})();
+
+
   function resetAll(){
     board=makeInitialBoard16x8(); offsets=initialOffsets.slice(); turn='w'; sel=null; moves=[]; msg='Blancas mueven'; pendingShift=null; epTarget=null; botLog=[]; gameOver=false; winner=null; overlayText=null;
     history=[]; ply=0; reviewing=false; reviewIndex=0; hideOverlay();
@@ -1014,11 +1136,16 @@ function renderRowControls(){
 
   // ---- Bot ----
   function maybeBot(){ pendingShiftPreview=null;
-    if(mode!=='bot') return;
-    if(pendingShift) return;
-    if(turn!==botSide) return;
-    if(gameOver || reviewing) return;
-    setTimeout(()=>{ botPreview=null; const vis=buildVisible(board,offsets);
+  if(mode!=='bot') return;
+  if(pendingShift) return;
+  if(turn!==botSide) return;
+  if(gameOver || reviewing) return;
+  if(window.__BOT_BUSY__) return; window.__BOT_BUSY__ = true;
+
+  (async ()=>{
+    try{
+      botPreview=null;
+      const vis=buildVisible(board,offsets);
       let best=null, bestVal=-1e9;
       for(let r=0;r<8;r++)for(let c=0;c<8;c++){
         const p=vis[r][c]; if(!p||p.color!==botSide) continue;
@@ -1029,54 +1156,100 @@ function renderRowControls(){
           const v=buildVisible(b2,offsets);
           let s=0; for(let R=0;R<8;R++)for(let C=0;C<8;C++){ const q=v[R][C]; if(!q) continue; s+=({P:1,N:3,B:3,R:5,Q:9,K:100}[q.type]||0)*(q.color===botSide?1:-1); }
           if(captured) s+=0.3;
+          try{
+            if(lastBotMove){
+              const backtrack = (lastBotMove.from.r===rr && lastBotMove.from.c===cc && lastBotMove.to.r===r && lastBotMove.to.c===c);
+              if(backtrack) s -= 0.9;
+            }
+            if(lastHumanMove){
+              const mirror = (lastHumanMove.from.r===rr && lastHumanMove.from.c===cc && lastHumanMove.to.r===r && lastHumanMove.to.c===c);
+              if(mirror) s -= 0.6;
+            }
+            const center = (cc>=2 && cc<=5) ? 0.1 : 0;
+            s += center;
+          }catch(_){}
           if(capturesKing) s+=1000;
-          if(s>bestVal){ bestVal=s; best={from:{r,c}, to:{r:rr,c:cc}, special, captured, capturesKing}; }
+          if(s>bestVal || (s===bestVal && Math.random()<0.15)){ bestVal=s; best={from:{r,c}, to:{r:rr,c:cc}, special, captured, capturesKing}; }
         }
       }
       if(!best){ evaluateStatus(botSide); render(); return; }
       const {from,to,special,captured,capturesKing}=best;
-      botPreview = { from, to }; msg='El bot está por mover...'; render();
-      let {board:newBoard,movedPiece}=applyMove(board,offsets,from,to,special);
-      const lastRank=movedPiece.color==='w'?7:0; const bc=toBaseCol(to.c,to.r,offsets);
-      let promo=false;
-      if(movedPiece.type==='P' && to.r===lastRank){ const copy=cloneB(newBoard); copy[to.r][bc]={type:'Q',color:movedPiece.color,hasMoved:true}; newBoard=copy; promo=true; }
-      const note = moveText(movedPiece, from, {r:to.r,c:to.c}, captured, promo);
-      board=newBoard; sel=null; moves=[]; 
-      if(movedPiece.type==='P' && Math.abs(from.r - to.r)===2){ 
-        epTarget = { r:(from.r+to.r)/2, c: to.c };
-      } else {
-        epTarget = null;
+      try{ lastBotMove = { from: {r: from.r, c: from.c}, to: {r: to.r, c: to.c} }; }catch(_){};
+      const pieceAt = vis[from.r][from.c];
+      botPreview = { from, to };
+      const moveMsg = `El bot ha decidido mover ${window.piezaNombre ? window.piezaNombre(pieceAt.type) : pieceAt.type} a ${algebra(to.r,to.c)}.`;
+      msg = 'El bot está por mover.'; render();
+
+      // 1) Espera inicial de 1s DESPUÉS del movimiento del usuario antes de mostrar el cartel
+      await new Promise(res => setTimeout(res, 1000));
+      // 2) Mostrar cartel ~3s SIN realizar la acción durante el cartel
+      if(window.BOT_UI){
+        await window.BOT_UI.showFor(moveMsg, (window.BOT_TIMING?window.BOT_TIMING.announceMove:3000));
       }
 
-      if(capturesKing){
+      // 3) Ejecutar la jugada recién cuando desaparece el cartel
+      let res = applyMove(board,offsets,from,to,special);
+      let newBoard = res.board;
+      let movedPiece = res.movedPiece;
+      const lastRank = movedPiece.color==='w'?7:0;
+      const bc = toBaseCol(to.c,to.r,offsets);
+      let promo=false;
+      if(movedPiece.type==='P' && to.r===lastRank){
+        const copy=cloneB(newBoard); copy[to.r][bc]={type:'Q',color:movedPiece.color,hasMoved:true}; newBoard=copy; promo=true;
+      }
+      const note = moveText(movedPiece, from, {r:to.r,c:to.c}, res.captured, promo);
+      board=newBoard; sel=null; moves=[];
+      if(movedPiece.type==='P' && Math.abs(from.r - to.r)===2){ epTarget = { r:(from.r+to.r)/2, c: to.c }; } else { epTarget = null; }
+      if(res.capturesKing){
         snapshot(note+' #');
         gameOver=true; winner=botSide;
         msg=`¡Jaque mate! Ganan ${winner==='w'?'Blancas':'Negras'}.`;
         showOverlay('JAQUE MATE');
-        render(); return;
+        render();
+        return;
+      } else {
+        if(!res.captured) snapshot(note);
       }
+      render();
 
-      let decisionText=null;
-      if(captured){
-        snapshot(note+' ×');
-        const row=to.r; const doShift=Math.random()<0.5;
+      // Tras mover: si capturó, decidir y anunciar shift/mantener (acción SOLO después del cartel)
+      if(res.captured){
+        if(window.BOT_UI){
+          await window.BOT_UI.showFor('El bot está decidiendo si mantener o desplazar la sección.', (window.BOT_TIMING?window.BOT_TIMING.decideShift:3000));
+        }
+        const row = to.r;
+        const target = (offsets[row]===0) ? 8 : 0;
+        let doShift = Math.random() < 0.5;
+        let allowShift = true;
         if(doShift){
-          const newOff=offsets.slice(); const newTarget=(offsets[row]===0)?8:0; newOff[row]=newTarget; offsets=newOff;
-          decisionText=`Bot capturó y movió la sección de la fila ${row+1} al tope ${newTarget===0?'izquierdo':'derecho'}.`;
-          snapshot(`shift fila ${row+1} → ${newTarget===0?'tope izq.':'tope der.'}`);
+          try{
+            if(window.AJ_RULES && !window.AJ_RULES.legalShift(row, target, board, offsets)){ allowShift = false; }
+          }catch(_){}
+          if(!allowShift) doShift = false;
+        }
+        const finalText = doShift ? 'El bot decide desplazar la sección.' : 'El bot decide mantener la sección.';
+
+        if(window.BOT_UI){
+          await window.BOT_UI.showFor(finalText, (window.BOT_TIMING?window.BOT_TIMING.announceShift:3000));
+        }
+        if(doShift){
+          const newOff = offsets.slice(); newOff[row] = target; offsets = newOff;
+          snapshot(`shift fila ${row+1} → ${target===0?'tope izq.':'tope der.'}`);
         } else {
-          decisionText=`Bot capturó y mantuvo la sección (sin mover).`;
           snapshot('mantiene sección');
         }
-        botLog=[{t:Date.now(), msg:decisionText}, ...botLog].slice(0,40);
-      } else {
-        snapshot(note);
+        render();
       }
+
+      // Cerrar turno del bot
       turn=botSide==='w'?'b':'w';
       evaluateStatus(turn);
       render();
-    }, 1000);
-  }
+    } finally {
+      window.__BOT_BUSY__ = false;
+    }
+  })();
+}
 
   // ---- Revisión ----
   function goReview(idx){
@@ -1204,5 +1377,264 @@ function renderRowControls(){
 })();
 </script>
 
+
+<!-- Ajetrez SFX: move / shift / capture -->
+<script>
+(function(){
+  // Create audio objects (expects move.mp3, shift.mp3, capture.mp3 alongside this HTML)
+  const sfx = {
+    move: new Audio('move.mp3'),
+    shift: new Audio('shift.mp3'),
+    capture: new Audio('capture.mp3'),
+    play(a){
+      try { a.currentTime = 0; a.play(); } catch(e){ /* ignore autoplay blocks */ }
+    }
+  };
+
+  // Wrap applyMove to detect captures and play appropriate sound
+  if (typeof window.applyMove === 'function') {
+    const _applyMove = window.applyMove;
+    window.applyMove = function(...args){
+      const res = _applyMove.apply(this, args);
+      // res has shape: { board, captured, movedPiece }
+      if (res && res.captured) {
+        sfx.play(sfx.capture);
+      } else {
+        sfx.play(sfx.move);
+      }
+      return res;
+    };
+  }
+
+  // Wrap endShift to play shift sound when a row shift completes
+  if (typeof window.endShift === 'function') {
+    const _endShift = window.endShift;
+    window.endShift = function(...args){
+      const out = _endShift.apply(this, args);
+      sfx.play(sfx.shift);
+      return out;
+    };
+  }
+})();
+</script>
+
+
+<!-- Ajetrez SFX (assets/audio/*.mp3) -->
+<script>
+(function(){
+  const sfx = {
+    move: new Audio('assets/audio/move.mp3'),
+    shift: new Audio('assets/audio/shift.mp3'),
+    capture: new Audio('assets/audio/capture.mp3'),
+    play(a){ try{ a.currentTime=0; a.play(); }catch(e){} }
+  };
+  // Wrap applyMove to detect capture
+  if (typeof window.applyMove === 'function') {
+    const _applyMove = window.applyMove;
+    window.applyMove = function(...args){
+      const res = _applyMove.apply(this, args);
+      if (res && res.captured) sfx.play(sfx.capture);
+      else sfx.play(sfx.move);
+      return res;
+    };
+  }
+  // Wrap endShift to play shift sound
+  if (typeof window.endShift === 'function') {
+    const _endShift = window.endShift;
+    window.endShift = function(...args){
+      const out = _endShift.apply(this, args);
+      sfx.play(sfx.shift);
+      return out;
+    };
+  }
+})();
+</script>
+
+
+<!-- ====== AUDIO SFX (autoplay-safe) ====== -->
+<audio id="sfx-move"    preload="auto" src="assets/audio/move.mp3"></audio>
+<audio id="sfx-capture" preload="auto" src="assets/audio/capture.mp3"></audio>
+<audio id="sfx-shift"   preload="auto" src="assets/audio/shift.mp3"></audio>
+<script>
+(function(){
+  const moveEl    = document.getElementById('sfx-move');
+  const captureEl = document.getElementById('sfx-capture');
+  const shiftEl   = document.getElementById('sfx-shift');
+  function unlock(){
+    [moveEl, captureEl, shiftEl].forEach(a=>{
+      try{ a.muted = true; a.play().then(()=>{ a.pause(); a.currentTime = 0; a.muted = false; }).catch(()=>{}); }catch(e){}
+    });
+    document.removeEventListener('pointerdown', unlock, {once:true});
+    document.removeEventListener('keydown', unlock, {once:true});
+  }
+  document.addEventListener('pointerdown', unlock, {once:true});
+  document.addEventListener('keydown', unlock, {once:true});
+  window.AJ_SFX = {
+    playMove(){ try{ moveEl.currentTime=0; moveEl.play(); }catch(e){} },
+    playCapture(){ try{ captureEl.currentTime=0; captureEl.play(); }catch(e){} },
+    playShift(){ try{ shiftEl.currentTime=0; shiftEl.play(); }catch(e){} }
+  };
+})();
+</script>
+
+
+<script>
+// === Regla: Siempre debe haber al menos 1 rey de cada color en el 8x8 visible ===
+(function(){
+  if(!window.AJ_RULES){ window.AJ_RULES = {}; }
+  
+window.AJ_RULES.kingsInPlay = function(color, board, offsets){
+  try{
+    let count = 0;
+    for(let r=0;r<8;r++){
+      const off = offsets[r];
+      for(let vc=0; vc<8; vc++){
+        const cell = board[r][off+vc];
+        if(cell && cell.type === 'K' && cell.color === color){ count++; }
+      }
+    }
+    return count;
+  }catch(e){ return 0; }
+};
+
+  window.AJ_RULES.legalShift = function(row, target, board, offsets){
+    try{
+      const beforeW = window.AJ_RULES.kingsInPlay('w', board, offsets);
+      const beforeB = window.AJ_RULES.kingsInPlay('b', board, offsets);
+      const newOff = offsets.slice();
+      newOff[row] = target;
+      const afterW = window.AJ_RULES.kingsInPlay('w', board, newOff);
+      const afterB = window.AJ_RULES.kingsInPlay('b', board, newOff);
+      if(afterW < 1 || afterB < 1) return false;
+      return true;
+    }catch(e){ return true; }
+  };
+})();
+</script>
+
+
+<style id="botHUD-styles">
+  .bot-hud{ position: fixed; display: none; z-index: 2147483000; pointer-events: none; }
+  .bot-hud .bot-card{
+    background: rgba(17,24,39,.92);
+    color:#fff;
+    padding: 6px 10px;
+    border-radius: 12px;
+    font-size: clamp(13px, 2.2vw, 16px);
+    font-weight: 700;
+    line-height: 1.2;
+    text-align:center;
+    box-shadow: 0 .5rem 1.25rem rgba(0,0,0,.35);
+    max-width: 70vw;
+    white-space: nowrap;
+  }
+</style>
+
+
+<div id="botHUD" class="bot-hud"><div class="bot-card" id="botHUDText"></div></div>
+
+
+<script id="botHUD-helpers">
+(function(){
+  const hud = document.getElementById('botHUD');
+  const textEl = document.getElementById('botHUDText');
+
+  function estimateCell(r){
+    if(!r) return 18; // fallback px
+    const ratio = r.width / Math.max(1,r.height);
+    // Ajetrez suele verse apaisado (16x8). Si es más ancho que alto, tomamos 16 columnas; si no, 8.
+    const cols = ratio > 1.2 ? 16 : 8;
+    const rows = 8;
+    const cellW = r.width / cols;
+    const cellH = r.height / rows;
+    const cell = Math.max(12, Math.min(cellW, cellH)); // sensible clamp
+    return cell;
+  }
+
+  function positionToBoard(){
+    if(!hud) return;
+    const boardEl = document.getElementById('board') || document.getElementById('mobile-board-down-1square');
+    const r = boardEl ? boardEl.getBoundingClientRect() : null;
+    const cell = estimateCell(r);
+    // subir medio casillero (~0.5 * cell)
+    const top = r ? Math.max(4, r.top + window.scrollY - 12 - (cell * 0.5)) : window.scrollY + 12;
+    const left = r ? (r.left + r.width/2 + window.scrollX) : (window.innerWidth/2 + window.scrollX);
+    hud.style.top = top + 'px';
+    hud.style.left = left + 'px';
+    hud.style.transform = 'translateX(-50%)';
+  }
+
+  function show(text){
+    try{
+      // If in fullscreen, ensure HUD is inside the fullscreen element (top layer)
+      const fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+      if(fsEl && hud && !fsEl.contains(hud)){ fsEl.appendChild(hud); }
+      if(!fsEl && hud && hud.parentNode !== document.body){ document.body.appendChild(hud); }
+    }catch(e){}
+    try{
+      if(!hud || !textEl) return;
+      textEl.textContent = text;
+      positionToBoard();
+      hud.style.display = 'block';
+    }catch(e){}
+  }
+  function hide(){
+    try{
+      if(!hud) return;
+      hud.style.display = 'none';
+    }catch(e){}
+  }
+  async function showFor(text, ms, onAction, actionLead){
+    ms = (typeof ms==='number' && ms>0) ? ms : 3000;
+    actionLead = (typeof actionLead==='number' && actionLead>=0) ? actionLead : 800;
+    return new Promise((resolve)=>{
+      show(text);
+      const when = Math.max(0, ms - actionLead);
+      if(typeof onAction === 'function'){
+        setTimeout(()=>{ try{ onAction(); }catch(e){} }, when);
+      }
+      setTimeout(()=>{ hide(); resolve(); }, ms);
+    });
+  }
+
+  window.addEventListener('resize', ()=>{
+    if(hud && hud.style.display !== 'none') positionToBoard();
+  });
+  window.addEventListener('scroll', ()=>{
+    if(hud && hud.style.display !== 'none') positionToBoard();
+  });
+
+  window.BOT_UI = { showFor };
+  // Keep HUD in correct layer when entering/leaving fullscreen
+  document.addEventListener('fullscreenchange', ()=>{
+    try{
+      const fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+      if(fsEl && hud && !fsEl.contains(hud)){ fsEl.appendChild(hud); positionToBoard(); }
+      if(!fsEl && hud && hud.parentNode !== document.body){ document.body.appendChild(hud); positionToBoard(); }
+    }catch(e){}
+  });
+  window.BOT_TIMING = window.BOT_TIMING || { announceMove: 3000, decideShift: 3000, announceShift: 3000, actionLead: 800 };
+  window.piezaNombre = window.piezaNombre || function(t){
+    const map = {P:'peón', N:'caballo', B:'alfil', R:'torre', Q:'dama', K:'rey'};
+    return map[t] || 'pieza';
+  };
+})();
+</script>
+
+
+<script>
+(function(){
+  function moveToastToFS(){
+    try{
+      var el=document.getElementById('rule-toast');
+      if(!el) return;
+      var fs=document.fullscreenElement||document.webkitFullscreenElement;
+      if(fs && !fs.contains(el)){ fs.appendChild(el); }
+      if(!fs && el.parentNode!==document.body){ document.body.appendChild(el); }
+    }catch(e){}
+  }
+  document.addEventListener('fullscreenchange', moveToastToFS);
+})();
+</script>
 </body>
 </html>
