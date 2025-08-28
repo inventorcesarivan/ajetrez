@@ -296,6 +296,81 @@ Desde ya, <strong>¡Muchas gracias por tu aporte!</strong>
 </section>
 </article>
 <article class="hidden" data-view="completo">
+
+  <section id="reglas-ajetrez">
+    <h2>Reglas de Ajetrez</h2>
+    <p>A continuación se presentan las reglas oficiales del juego Ajetrez. Estas combinan los fundamentos del ajedrez clásico con las mecánicas propias del tablero seccionado y desplazable.</p>
+
+    <h3>1. Tablero y disposición inicial</h3>
+    <ul>
+      <li>El tablero base es de <strong>8 filas por 16 columnas</strong>.</li>
+      <li>Cada jugador comienza con dos filas completas de piezas:
+        <ul>
+          <li><strong>Primera fila</strong>: disposición clásica de ajedrez (Torre, Caballo, Alfil, Dama, Rey, Alfil, Caballo, Torre), <em>duplicada</em> para cubrir las 16 casillas.</li>
+          <li><strong>Segunda fila</strong>: 16 peones.</li>
+        </ul>
+      </li>
+      <li>Negras comienzan arriba (filas 0 y 1). Blancas comienzan abajo (filas 6 y 7).</li>
+      <li>La zona jugable visible es siempre un <strong>tablero central de 8×8 casillas</strong>, que se forma desplazando secciones.</li>
+    </ul>
+
+    <h3>2. Turnos</h3>
+    <ul>
+      <li>El juego inicia con <strong>Blancas</strong> moviendo primero.</li>
+      <li>En cada turno, el jugador puede mover una pieza de acuerdo con las reglas normales del ajedrez.</li>
+      <li>Después de capturar, el jugador debe elegir si <strong>desplaza la sección</strong> de esa fila o si la <strong>mantiene</strong>.</li>
+    </ul>
+
+    <h3>3. Movimientos de las piezas</h3>
+    <p>Las piezas se mueven como en el ajedrez clásico:</p>
+    <ul>
+      <li><strong>Peón</strong>: avanza una casilla; en su primer movimiento puede avanzar dos. Captura en diagonal.</li>
+      <li><strong>Caballo</strong>: en forma de “L”.</li>
+      <li><strong>Alfil</strong>: en diagonales.</li>
+      <li><strong>Torre</strong>: en filas o columnas.</li>
+      <li><strong>Dama</strong>: combina los movimientos de torre y alfil.</li>
+      <li><strong>Rey</strong>: una casilla en cualquier dirección.</li>
+    </ul>
+
+    <h3>4. Reglas especiales</h3>
+    <ul>
+      <li><strong>Promoción</strong>: si un peón llega a la última fila rival, se promociona automáticamente a Dama.</li>
+      <li><strong>En passant</strong>: habilitado y funciona según la regla clásica.</li>
+      <li><strong>Enroque</strong>: permitido bajo las mismas condiciones que en ajedrez estándar.</li>
+      <li><strong>Captura directa del rey</strong>: si se logra capturar al rey, la partida termina de inmediato en jaque mate.</li>
+    </ul>
+
+    <h3>5. Regla de desplazamiento de secciones</h3>
+    <ul>
+      <li>Cuando un jugador captura una pieza, aparece la opción de:
+        <ul>
+          <li><strong>Desplazar la sección</strong>: mover las 8 casillas de esa fila hacia un tope lateral (columna 0 o 8, un salto de 8 casilleros).</li>
+          <li><strong>Mantener la sección</strong>: dejar la fila como está.</li>
+        </ul>
+      </li>
+      <li>Después de la decisión, el turno pasa al oponente.</li>
+      <li><strong>Restricción</strong>: está prohibido desplazar una sección si esto provoca que el 8×8 central quede sin rey de alguno de los jugadores.</li>
+    </ul>
+
+    <h3>6. Condiciones de finalización</h3>
+    <ul>
+      <li><strong>Jaque mate</strong>: cuando un rey queda en jaque y no existe movimiento legal que lo evite.</li>
+      <li><strong>Captura directa del rey</strong>: termina automáticamente la partida.</li>
+      <li><strong>Tablas por ahogado</strong>: cuando el jugador en turno no está en jaque pero no tiene movimientos legales.</li>
+      <li><strong>Tablas por acuerdo</strong>: en modo 1v1, los jugadores pueden pactar tablas.</li>
+    </ul>
+
+    <h3>7. Modos de juego</h3>
+    <ul>
+      <li><strong>1v1 local</strong>: dos jugadores humanos en el mismo dispositivo.</li>
+      <li><strong>Vs Bot</strong>: el jugador controla Blancas y el bot Negras. El bot:
+        <ul>
+          <li>Juega con movimientos legales y valoración simple de material.</li>
+          <li>Al capturar, decide aleatoriamente entre desplazar la sección o mantenerla.</li>
+        </ul>
+      </li>
+    </ul>
+  </section>
 <section id="modo-simple">
 <h2>Modo simple</h2>
 <p>En este modo, <strong>sólo el recuadro central del tablero es jugable</strong>. Las partes sobrantes (aunque contengan piezas) <strong>no participan</strong> hasta que sean <strong>ingresadas</strong> mediante el <em>desplazamiento de secciones</em>.</p>
@@ -313,14 +388,7 @@ Desde ya, <strong>¡Muchas gracias por tu aporte!</strong>
 <li><strong>4 alfiles</strong>, <strong>4 caballos</strong>, <strong>4 torres</strong></li>
 <li><strong>16 peones</strong></li>
 </ul>
-<div class="card">
-<p>Colabora con el proyecto y sé parte de él. </p>
-<p>Con tu donación, ayudas a mantener la página y hacer crecer el proyecto. Ya que hay mucho por hacer y queremos que el proyecto sea colectivo.</p>
-<p>Si colaboras con una donación, quedaras automáticamente participando del sorteo mensual de un tablero (físico) y artesanal del juego.</p>
-<p>Además, por tu ayuda, difusión y colaboración, recibirás beneficios exclusivos como, por ejemplo: enterarte de los cambios y novedades, antes de que sean publicados. </p>
-<p>También podrás testear los distintos modos de juego de Ajetrez, antes de que sean publicados. “Porque sí”. Hay otros modos de juego que haremos públicos a su debido tiempo.</p>
-<p>No te olvides de compartir. ¡Muchas gracias por tu aporte!</p>
-</div>
+
 </section>
 <section id="reglas-extra">
 <h2>Reglas añadidas</h2>
