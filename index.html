@@ -163,25 +163,53 @@ header{flex-wrap:wrap}
 body{word-break:break-word; overflow-x:hidden;}
 main{min-width:0}
 
-@media (max-width: 699px){
-  #version-banner {
-    top: -30px !important;
-    left: auto !important;
-    right: 10px !important;
-  }
+
 }
 }
 </style>
 <style>
-/* Force banner above all layers (web & mobile) */
-#version-banner{
+/* Center the banner overlay by default (web & mobile) */
+#version-banner {
   position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
   z-index: 2147483647 !important;
+  background: red;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  animation: blink 1s infinite;
+}
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.2; }
+  100% { opacity: 1; }
+}
+@media (max-width: 699px){
+  #version-banner {
+    font-size: 0.9rem !important;
+    padding: 8px 14px !important;
+  }
 }
 </style>
 
-
-
+<style>
+.bar { position: relative !important; }
+#version-banner {
+  position: absolute !important;
+  top: -40px !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin: 0 auto !important;
+  display: inline-block !important;
+  width: max-content !important;
+  z-index: 2147483647 !important;
+}
+</style>
 
 <style id="comentario-iframe-fix">
 /* Asegurar que el formulario (iframe de JotForm) se vea completo */
@@ -216,7 +244,7 @@ main{min-width:0}
 <div class="brand"><h1 style="display: none;">Ajetrez - El desafío del cambio</h1>
 </div>
 <div class="bar" style="position:relative;">
-<div id="version-banner">🚀 Prueba la nueva versión del juego: <strong>Ajetrez 2.2</strong></div>
+
 <style>
 #version-banner {
   position: absolute;
@@ -238,10 +266,7 @@ main{min-width:0}
   100% { opacity: 1; }
 }
 
-@media (max-width: 699px){
-  #version-banner {
-    top: -50px !important;
-  }
+
 }
 </style>
 <button class="tab-btn" onclick="var audio=document.getElementById('ma-audio'); if(audio){audio.pause();} window.open('https://ajetrezver2.netlify.app/', '_blank');" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;   background-color:red !important; color:white !important; outline-offset:2px;">Ir al juego</button><button aria-selected="true" class="tab-btn" data-tab="intro" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Introducción</button><button aria-selected="false" class="tab-btn" data-tab="abreviado" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Guía rápida del juego</button><button aria-selected="false" class="tab-btn" data-tab="completo" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Reglas del juego</button>
@@ -865,5 +890,93 @@ document.getElementById('editarEnlace').addEventListener('click', (e)=>{
   setTimeout(ensureTabFromHash, 200);
 })();
 </script>
+
+
+<div id="version-banner">
+  <a href="https://ajetrezver2.netlify.app/" target="_blank" style="color:white; text-decoration:none;">
+    🚀 Prueba la nueva versión del juego: <strong>Ajetrez 2.2</strong>
+  </a>
+  <span id="close-banner" style="margin-left:10px; cursor:pointer;">✖</span>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  var closeBtn = document.getElementById("close-banner");
+  if(closeBtn){
+    closeBtn.addEventListener("click", function(){
+      var banner = document.getElementById("version-banner");
+      if(banner){ banner.style.display = "none"; }
+    });
+  }
+});
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+/* FINAL OVERRIDE adjusted WEB vs MOBILE */
+#version-banner{
+  position: fixed !important;
+  top: 420px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  background: red !important;
+  color: #fff !important;
+  padding: 12px 18px !important;
+  border-radius: 10px !important;
+  font-weight: 800 !important;
+  font-size: 1rem !important;
+  z-index: 2147483647 !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,.35) !important;
+  animation: blink 1s infinite !important;
+  pointer-events: auto !important;
+  white-space: nowrap !important;
+}
+#version-banner a{
+  color: #fff !important;
+  text-decoration: none !important;
+}
+#version-banner #close-banner{
+  margin-left: 12px;
+  font-weight: bold;
+}
+#version-banner #close-banner:hover{
+  color: yellow;
+}
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.2; }
+  100% { opacity: 1; }
+}
+@media (max-width: 699px){
+  #version-banner{
+    font-size: .9rem !important;
+    padding: 8px 12px !important;
+    top: 180px !important; /* moved higher to sit just above the button in mobile */
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+  }
+}
+</style>
+
+
+
+
+
+
+
+
+
+
+
 </body>
 </html>
