@@ -220,6 +220,12 @@ main{min-width:0}
   50% { opacity: 0.2; }
   100% { opacity: 1; }
 }
+
+@media (max-width: 699px){
+  #version-banner {
+    top: -50px !important;
+  }
+}
 </style>
 <button class="tab-btn" onclick="var audio=document.getElementById('ma-audio'); if(audio){audio.pause();} window.open('https://ajetrezver2.netlify.app/', '_blank');" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;   background-color:red !important; color:white !important; outline-offset:2px;">Ir al juego</button><button aria-selected="true" class="tab-btn" data-tab="intro" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Introducción</button><button aria-selected="false" class="tab-btn" data-tab="abreviado" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Guía rápida del juego</button><button aria-selected="false" class="tab-btn" data-tab="completo" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Reglas del juego</button>
 <button aria-selected="false" class="tab-btn" data-tab="colabora" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Colabora con el proyecto</button>
