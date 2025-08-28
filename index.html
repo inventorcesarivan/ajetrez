@@ -166,26 +166,6 @@ main{min-width:0}
 
 
 
-<style id="comentario-iframe-fix">
-/* Asegurar que el formulario (iframe de JotForm) se vea completo */
-#comentario-tab { padding: 8px 0 !important; text-align: center !important; }
-#comentario-tab iframe {
-  width: 80% !important;  /* 20% más angosto que el ancho total */
-  max-width: 80% !important;
-  height: 1200px !important; /* ajustar si sigue corto/largo */
-  min-height: 900px !important;
-  border: 0 !important;
-  display: block !important;
-  margin: 0 auto !important;
-}
-/* Evitar recortes por overflow en contenedores padres */
-#comentario-tab, #comentario-tab * {
-  overflow: visible !important;
-}
-</style>
-
-
-
 </head>
 <body>
 <div class="banner">
@@ -514,9 +494,10 @@ Desde ya, <strong>¡Muchas gracias por tu aporte!</strong>
 </article>
 <article class="hidden" data-view="comentario">
 <section id="comentario-tab">
+<style>#comentario-tab #ff-compose{max-width:900px;margin:10px auto;}</style>
 <h2>Deja tu comentario</h2>
 <div class="card" style="padding: 16px 18px; margin-top: 10px;">
-<script type="text/javascript" src="https://form.jotform.com/jsform/252337825704661"></script>
+<iframe src="https://docs.google.com/forms/d/e/1FAIpQLScbwPV0PDI1e-c7mLgiqu3koLOlyFiAnL1aCB-kLQ-iiK1xtA/viewform?embedded=true" width="640" height="1647" frameborder="0" marginheight="0" marginwidth="0">Cargando…</iframe>
 </div>
 </section>
 </article>
