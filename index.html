@@ -895,5 +895,38 @@ document.getElementById('editarEnlace').addEventListener('click', (e)=>{
 })();
 </script>
 
+
+<script>
+(function(){
+  var audio = document.getElementById('ma-audio');
+  if (!audio) return;
+
+  function pauseAudio(){ if (!audio.paused) try { audio.pause(); } catch(_){} }
+
+  // Pausar cuando la página queda en segundo plano (cambia de pestaña/abre el juego en otra)
+  document.addEventListener('visibilitychange', function(){
+    if (document.hidden) pauseAudio();
+  });
+  // iOS Safari dispara 'pagehide' al cambiar de pestaña / abrir en nueva
+  window.addEventListener('pagehide', pauseAudio);
+
+  // Pausar lo antes posible en móviles (touch/pointer)
+  function armEarlyPause(sel){
+    document.querySelectorAll(sel).forEach(function(el){
+      ['touchstart','pointerdown','mousedown'].forEach(function(evt){
+        el.addEventListener(evt, pauseAudio, {passive:true});
+      });
+      // redundancia por si algún navegador no emite los anteriores
+      el.addEventListener('click', pauseAudio);
+    });
+  }
+
+  // Botón y enlaces relevantes
+  armEarlyPause('#btnIrJuego');
+  armEarlyPause('[data-pause-audio]');
+  armEarlyPause('a[href*="ajetrezver2"]');
+})();
+</script>
+
 </body>
 </html>
