@@ -188,6 +188,8 @@ main{min-width:0}
 
 </head>
 <body>
+
+
 <div class="banner">
 <img alt="Banner Ajetrez" src="assets/imagenes/banner-hero-ajetrez.jpg" style="width:100%; border-radius:12px; margin:0 0 20px 0;"/>
 </div>
@@ -196,7 +198,30 @@ main{min-width:0}
 <header>
 <div class="brand"><h1 style="display: none;">Ajetrez - El desafío del cambio</h1>
 </div>
-<div class="bar"><button class="tab-btn" onclick="var audio=document.getElementById('ma-audio'); if(audio){audio.pause();} window.open('https://ajetrezver2.netlify.app/', '_blank');" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;   background-color:red !important; color:white !important; outline-offset:2px;">Ir al juego</button><button aria-selected="true" class="tab-btn" data-tab="intro" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Introducción</button><button aria-selected="false" class="tab-btn" data-tab="abreviado" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Guía rápida del juego</button><button aria-selected="false" class="tab-btn" data-tab="completo" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Reglas del juego</button>
+<div class="bar" style="position:relative;">
+<div id="version-banner">🚀 Prueba la nueva versión del juego: <strong>Ajetrez 2.2</strong></div>
+<style>
+#version-banner {
+  position: absolute;
+  top: -30px;
+  left: 0;
+  background: red;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  z-index: 1000;
+  animation: blink 1s infinite;
+  box-shadow: 0 0 6px rgba(0,0,0,0.3);
+}
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.2; }
+  100% { opacity: 1; }
+}
+</style>
+<button class="tab-btn" onclick="var audio=document.getElementById('ma-audio'); if(audio){audio.pause();} window.open('https://ajetrezver2.netlify.app/', '_blank');" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;   background-color:red !important; color:white !important; outline-offset:2px;">Ir al juego</button><button aria-selected="true" class="tab-btn" data-tab="intro" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Introducción</button><button aria-selected="false" class="tab-btn" data-tab="abreviado" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Guía rápida del juego</button><button aria-selected="false" class="tab-btn" data-tab="completo" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Reglas del juego</button>
 <button aria-selected="false" class="tab-btn" data-tab="colabora" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Colabora con el proyecto</button>
 <button aria-selected="false" class="tab-btn" data-tab="comentario" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Deja tu comentario</button><button class="tab-btn" data-tab="novedades" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Novedades</button></div>
 <button class="btn" id="btnExpand" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Expandir todo</button><button class="btn" id="btnCollapse" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Contraer todo</button>
