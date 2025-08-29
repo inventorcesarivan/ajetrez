@@ -3807,4 +3807,65 @@ window.AJ_RULES.kingsInPlay = function(color, board, offsets){
   }
 }
 </style>
+
+<style id="bottom-buttons-UNIFY-3mm-2025-08-29">
+/* === Unificación definitiva: margen único 3mm para la botonera inferior (web + móvil) ===
+   - Se anulan márgenes/posiciones previas duplicadas en #baseFooter, #donateBar y #floatingControls
+   - Separación respecto al juego fijada en 3mm en TODAS las vistas
+*/
+#baseFooter, #donateBar, #floatingControls{
+  top: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  right: auto !important;
+  transform: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Footer como fila flexible y con separación única de 3mm desde el tablero */
+#baseFooter{
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  margin-top: 3mm !important;   /* << única medida de separación */
+}
+
+/* Asegurar que reglas anteriores que intentaban empujar a la derecha/izq no interfieran */
+#floatingControls{ margin-left: 0 !important; margin-right: 0 !important; }
+#donateBar{ margin-left: 0 !important; margin-right: 0 !important; }
+
+/* Seguridad: ningún margen inferior extra que “aleje” la botonera de la base */
+#baseFooter{ margin-bottom: 0 !important; }
+</style>
+
+<style id="bottom-buttons-UNIFY-3mm-all-sides-2025-08-29">
+/* === Unificación definitiva de márgenes para botonera inferior ===
+   - Medida única de separación: 3mm en todos los lados (arriba, abajo, izquierda, derecha)
+   - Aplica a footer (#baseFooter) y contenedores (#donateBar, #floatingControls)
+   - Se eliminan duplicados/conflictos de reglas anteriores
+*/
+#baseFooter, #donateBar, #floatingControls{
+  position: relative !important;
+  transform: none !important;
+  top: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  right: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Footer como fila flexible, con 3mm de separación en TODOS los lados */
+#baseFooter{
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  margin: 3mm !important;   /* separación única: 3mm en todos los lados */
+}
+</style>
 </html>
