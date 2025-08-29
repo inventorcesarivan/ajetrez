@@ -3702,4 +3702,88 @@ window.AJ_RULES.kingsInPlay = function(color, board, offsets){
   bottom: 2mm !important;
 }
 </style>
+
+<style id="bottom-buttons-web-down-0_5square-2025-08-29">
+/* === Versión web: bajar los botones inferiores medio casillero === */
+@media screen and (min-width: 769px) {
+  #bottom-buttons, .bottom-buttons, #buttons-container, .buttons-container {
+    margin-bottom: calc(0.5 * var(--square)) !important;
+    bottom: calc(0.5 * var(--square)) !important;
+  }
+}
+</style>
+
+<style id="fix-bottom-buttons-2mm-gap-2025-08-29">
+/* ======= Corrección integral botones inferiores (web + móvil) =======
+   Objetivo: que #donateBar (izq) y #floatingControls (der) queden alineados
+   igual en ambas versiones, con separación de ~2mm desde el juego.
+   Problemas detectados: transform y márgenes negativos en #baseFooter que impedían
+   posicionar los botones con precisión y de forma consistente entre web/móvil.
+----------------------------------------------------------------------- */
+
+/* 1) Resetear transformaciones previas del footer y colapsos de flujo */
+#baseFooter{
+  position: relative !important;
+  transform: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Si existía compensación mediante margin-bottom negativo, anúlala */
+#baseFooter{
+  margin-bottom: 0 !important;
+}
+
+/* 2) Estructura del footer: fila con izquierda/derecha */
+#baseFooter{
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  /* separación exacta respecto al tablero (#board) */
+  margin-top: 2mm !important;
+}
+
+/* 3) Asegurar que las dos áreas no sean flotantes ni absolutas */
+#donateBar, #floatingControls{
+  position: static !important;
+  transform: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* 4) Botones visualmente nivelados */
+#floatingControls .btn{
+  display: inline-flex !important;
+  align-items: center !important;
+  height: auto !important;
+}
+
+/* 5) Comportamiento responsive idéntico (web + móvil) */
+@media (max-width: 768px){
+  #baseFooter{ gap: 6px !important; }
+}
+
+/* 6) Seguridad: si había reglas que empujaban #floatingControls con márgenes,
+      las neutralizamos para evitar desalineaciones entre versiones */
+#floatingControls{
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* 7) Mantener 2mm del borde inferior de la base, si la base tiene fondo */
+.frame, #game, #container, #root {
+  /* no forzamos altura aquí; solo aseguramos que nada "tire" del footer */
+  overflow: visible !important;
+}
+</style>
+
+<style id="floatingControls-left-1square-2025-08-29">
+/* === Desplazar los botones de Reiniciar y Pantalla completa 1 casillero a la izquierda (web + móvil) === */
+#floatingControls{
+  position: relative !important;
+  left: calc(-1 * var(--square)) !important;
+}
+</style>
 </html>
