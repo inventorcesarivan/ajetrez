@@ -199,7 +199,12 @@ main{min-width:0}
 <div class="grid">
 <nav>
 <div style="margin-bottom:15px; text-align:center;">
-<audio controls id="ma-audio" src="assets/media/audio_descripcion_ajetrez.mp3" style="width:100%;" autoplay playsinline preload="auto"></audio>
+
+<div class="audio-wrap">
+  <div class="audio-label">Descripción del juego</div>
+  <audio controls id="ma-audio" src="assets/media/audio_descripcion_ajetrez.mp3" style="width:100%;" autoplay playsinline preload="auto"></audio>
+</div>
+
 </div>
 <div class="toc" id="toc"></div>
 <div class="card" style="margin-top:12px max-width: 90%; margin-left:auto; margin-right:auto;">
@@ -966,6 +971,25 @@ document.getElementById('editarEnlace').addEventListener('click', (e)=>{
   armEarlyPause('[data-pause-audio]');
   armEarlyPause('a[href*="ajetrezver2"]');
 })();
+</script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  const audio = document.querySelector("audio");
+  function detenerAudio(){
+    if(audio){
+      audio.pause();
+      audio.currentTime = 0;
+      audio.removeAttribute("src");
+      audio.load();
+    }
+  }
+  // Detectar click en cualquier botón o enlace hacia el juego
+  document.querySelectorAll('a[href*="ajetrez"], button#btnIrJuego').forEach(el => {
+    el.addEventListener("click", detenerAudio);
+  });
+});
 </script>
 
 </body>
