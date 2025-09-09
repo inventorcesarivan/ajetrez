@@ -926,12 +926,12 @@ document.getElementById('editarEnlace').addEventListener('click', (e)=>{
       pauseAudio();
       // Mantener el comportamiento de abrir en nueva pestaña
       try{ if (audio){ audio.pause(); audio.currentTime = 0; audio.src=''; } }catch(_){}
-      window.open("https://ajetrezver2-5.netlify.app/", "_blank");
+      window.open("https://ajetrezv30pruebas.netlify.app/", "_blank");
     });
   }
 
   // Cualquier elemento marcado con data-pause-audio o enlaces que apunten al juego
-  document.querySelectorAll('[data-pause-audio], a[href*="ajetrezver2-5"]').forEach(function(el){
+  document.querySelectorAll('[data-pause-audio], a[href*="ajetrezv30pruebas"]').forEach(function(el){
     el.addEventListener('click', pauseAudio);
   });
 })();
@@ -966,7 +966,7 @@ document.getElementById('editarEnlace').addEventListener('click', (e)=>{
   // Botón y enlaces relevantes
   armEarlyPause('#btnIrJuego');
   armEarlyPause('[data-pause-audio]');
-  armEarlyPause('a[href*="ajetrezver2-5"]');
+  armEarlyPause('a[href*="ajetrezv30pruebas"]');
 })();
 </script>
 
