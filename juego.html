@@ -1572,47 +1572,170 @@ textarea[placeholder*="UCI"], textarea[placeholder*="uci"]{ height: 160px !impor
 
 
 <style id="aj-timer-pill-container-2025-09-11">
-  /* Timer container: solid black pill that ENCAPSULATES the dot, time and pause */
   #timeIndicator{
     background: #000 !important;
     border: 2px solid #fff !important;
     border-radius: 14px !important;
     box-shadow: 0 3px 10px rgba(0,0,0,.25) !important;
-    padding: 6px 16px 6px 26px !important; /* extra left padding to separate from rounded edge */
+    padding: 6px 16px 6px 26px !important;
     display: inline-flex !important;
     align-items: center !important;
     gap: 10px !important;
-    overflow: hidden !important;   /* clip any inner rounding/scale so no “puntas” */
+    overflow: hidden !important;
   }
-  /* Ensure the small status dot is green and inside the pill */
   #timeIndicator .dot{
-    width: 10px !important;
-    height: 10px !important;
-    border-radius: 50% !important;
-    background: #34d399 !important;  /* emerald-400 */
-    box-shadow: 0 0 6px rgba(52,211,153,.8) !important;
+    width: 10px !important; height: 10px !important; border-radius: 50% !important;
+    background: #34d399 !important; box-shadow: 0 0 6px rgba(52,211,153,.8) !important;
     margin-left: 0 !important;
   }
-  /* Keep the time and button looking consistent on black */
-  #timeIndicator #timeTxt{
-    background: transparent !important;
-    color: #fff !important;
-    padding: 0 4px !important;
-  }
-  #timeIndicator #pauseBtn{
-    background: transparent !important;
-    color: #fff !important;
-    border: 0 !important;
-    padding: 0 !important;
-    font-weight: 700 !important;
-  }
+  #timeIndicator #timeTxt{ background: transparent !important; color: #fff !important; padding: 0 4px !important; }
+  #timeIndicator #pauseBtn{ background: transparent !important; color: #fff !important; border: 0 !important; padding: 0 !important; font-weight: 700 !important; }
 </style>
 
 <style id="aj-timer-corner-fix-2025-09-11">
-  #timeIndicator > * { margin-left: 0 !important; }
-  #timeIndicator > :first-child { margin-left: 0 !important; }
-  /* prevent inner elements from casting outside the rounded border on scale animations */
-  #timeIndicator > * { transform-origin: center; }
+  #timeIndicator > * { margin-left: 0 !important; transform-origin: center; }
+</style>
+
+<style id="aj-hide-registros-in-menu-2025-09-11">
+  .mp-tabs .tab-btn[data-tab="tab-registros"]{ display:none !important; }
+  #tab-registros{ display:none !important; }
+</style>
+
+<style id="aj-top-right-compact-2025-09-11">
+  /* En el topbar, empuja el timer hacia la derecha */
+  #topBar{ position: relative !important; }
+  #topBar #timeIndicator{ position: absolute !important; right: 10px !important; top: 6px !important; }
+  /* Achicar ancho de los botones internos (registro/reproductor) */
+  #timeIndicator #regv2-replayer,
+  #timeIndicator #regv2-clock-btn{
+    padding: 4px 8px !important;
+    border-radius: 12px !important;
+  }
+  /* Leve reducción del padding global del contenedor para compactarlo */
+  #timeIndicator{ padding-right: 14px !important; }
+</style>
+
+<style id="aj-topright-height-reduce-2025-09-11">
+  /* Achicar el ALTO del contenedor superior derecho */
+  #topBar #timeIndicator{
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    border-radius: 12px !important; /* acompaña al menor alto */
+  }
+  /* Botón Registro y Reproductor dentro del timer: más compactos */
+  #topBar #timeIndicator #regv2-clock-btn,
+  #topBar #timeIndicator #regv2-replayer{
+    padding-top: 3px !important;
+    padding-bottom: 3px !important;
+    min-height: 0 !important;
+  }
+  #topBar #timeIndicator #pauseBtn{
+    line-height: 1 !important;
+  }
+  #topBar #timeIndicator #timeTxt{
+    line-height: 1 !important;
+  }
+</style>
+
+<style id="aj-topright-height-strong-2025-09-11">
+  /* Fuerza altura total menor del contenedor negro del reloj */
+  #topBar #timeIndicator{
+    height: 32px !important;            /* altura total del pill */
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+    padding-left: 20px !important;
+    padding-right: 12px !important;
+    border-width: 2px !important;
+    border-radius: 12px !important;
+    align-items: center !important;
+  }
+  /* Compactar los botones internos y el reloj para alinearse con la nueva altura */
+  #topBar #timeIndicator #regv2-replayer,
+  #topBar #timeIndicator #regv2-clock-btn{
+    height: 24px !important;
+    min-height: 0 !important;
+    padding: 2px 8px !important;
+    line-height: 1 !important;
+    border-radius: 10px !important;
+  }
+  #topBar #timeIndicator #timeTxt,
+  #topBar #timeIndicator #pauseBtn{
+    line-height: 1 !important;
+  }
+  /* Dot más pequeño acorde a la altura */
+  #topBar #timeIndicator .dot{
+    width: 8px !important; height: 8px !important;
+  }
+</style>
+
+<style id="aj-topright-shift-down-3mm-2025-09-11">
+  /* Bajar el contenedor negro (reloj) ~3 mm */
+  #topBar #timeIndicator{
+    top: calc(6px + 3mm) !important;
+  }
+</style>
+
+<style id="aj-topright-shift-down-5mm-2025-09-11">
+  /* Bajar el contenedor negro (reloj) ~5 mm total */
+  #topBar #timeIndicator{
+    top: calc(6px + 5mm) !important;
+  }
+</style>
+
+<style id="aj-topright-shift-down-7mm-2025-09-11">
+  /* Bajar el contenedor negro (reloj) ~7 mm total */
+  #topBar #timeIndicator{
+    top: calc(6px + 7mm) !important;
+  }
+</style>
+
+<style id="aj-topright-shift-right-4mm-2025-09-11">
+  /* Desplazar ~4 mm hacia la derecha (más pegado al borde) */
+  #topBar #timeIndicator{
+    right: calc(10px - 4mm) !important;  /* partimos del 10px previo y restamos 4mm */
+  }
+</style>
+
+<style id="aj-donatebox-spacing-balance-2025-09-11">
+  /* Uniformar separaciones y balancear visualmente el bloque de donación */
+  #bottomBar #donateBox{
+    left: 12px !important;   /* leve corrimiento para balance respecto al centro */
+    gap: 14px !important;    /* separación uniforme entre Colabora / MP / PayPal */
+    transform: translateY(-50%) scale(0.9) !important; /* mantener escala actual */
+  }
+  #bottomBar #donateBox .btn.imgbtn{ margin: 0 !important; }
+  #bottomBar #donateBox .label{ margin: 0 !important; }
+</style>
+
+<style id="aj-donate-label-down-4mm-2025-09-11">
+  /* Bajar ~4 mm solo el indicador de texto "Colabora" */
+  #bottomBar #donateBox .label{
+    display: inline-block !important;
+    transform: translateY(4mm) !important;
+  }
+</style>
+
+<style id="aj-donate-label-down-6mm-2025-09-11">
+  /* Bajar ~6 mm total el indicador "Colabora" */
+  #bottomBar #donateBox .label{
+    transform: translateY(6mm) !important;
+  }
+</style>
+
+<style id="aj-left-shifts-2025-09-11">
+  /* Colabora: 2 mm a la izquierda (conservando el descenso previo) */
+  #bottomBar #donateBox .label{
+    margin-left: -2mm !important;   /* usar margen para no sobreescribir el translateY existente */
+  }
+
+  /* Modo de juego (arriba a la izquierda): 2 mm a la izquierda */
+  #topBar #modeGroup{
+    transform: translateX(-2mm) !important;
+  }
+  /* En caso de que algunos estilos reescriban el transform, también movemos su wrapper */
+  #topBar .mode-group{
+    transform: translateX(-2mm) !important;
+  }
 </style>
 </head><body><div class="frame" data-fullscreen-root="" id="fsRoot"><div class="shell"><div aria-label="Barra superior" class="bar" id="topBar"><div class="mode-group" id="modeGroup"><button aria-expanded="false" aria-haspopup="true" class="btn" id="btnMode" type="button">Modo de juego</button><span aria-live="polite" class="mode-indicator" id="modeIndicator">Player vs player (local)</span></div><div aria-live="polite" class="bot-hud" id="botHUD" role="status"><div class="bot-hud-inner"><span id="botHUDText"></span></div></div><div aria-label="Elegir modo de juego" class="dropdown" id="modeDropdown" role="menu"><button class="btn dd-item" data-label="Versus Bot" data-mode="bot" style="position:static;" type="button">Player Vs Bot</button><button class="btn dd-item" data-label="Player vs player (local)" data-mode="pvp-local" style="position:static;" type="button">Player vs player (local)</button><button class="btn dd-item" data-label="Bot versus bot (demo)" data-mode="bot-vs-bot" style="position:static;" type="button">Bot versus bot (demo)</button><button class="btn dd-item" data-label="Modo Online" data-mode="online" style="position:static;" type="button">Modo Online</button></div></div><div style="height:var(--toolbar-gap)"></div><div class="board-wrap" id="boardWrap">
 <!-- Floating Replay FAB (centered over board) -->
