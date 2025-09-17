@@ -1,992 +1,180 @@
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>Ajetrez — Reglas (Interactivo)</title>
-<link href="assets/imagenes/favicon-ajetrez.png" rel="icon" type="image/png"/>
-<link href="assets/imagenes/apple-touch-icon.png" rel="apple-touch-icon"/>
-<link href="assets/imagenes/ajetrez-social-512.png" rel="icon" sizes="512x512"/>
-<link href="assets/imagenes/logo-ajetrez-light-64.png" rel="icon" sizes="64x64"/>
-<style>
-  :root{--bg:#f6f3ee;--ink:#222;--muted:#5b4b3a;--brand:#8b5e34;--line:#e7dccf;--panel:#fff;--ok:#2e7d32}
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial}
-  .shell{max-width:1100px;margin:0 auto;padding:20px}
-  .app{background:var(--panel);border-radius:18px;box-shadow:0 14px 40px rgba(0,0,0,.08);overflow:hidden}
-  header{display:flex;gap:16px;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--line)}
-  .brand{display:flex;align-items:center;gap:12px}
-  .brand img{height:36px}
-  h1{margin:0;font-size:20px}
-  .tabs{display:flex;gap:8px}
-  .tab-btn{appearance:none;border:1px solid var(--line);background:#fff;color:#553b27;padding:8px 12px;border-radius:999px;cursor:pointer;font-weight:600}
-  .tab-btn[aria-selected="true"]{background:var(--brand);border-color:var(--brand);color:#fff}
-  
-  .btn{appearance:none;border:1px solid var(--line);background:#fff;color:#222;padding:8px 12px;border-radius:10px;cursor:pointer;transition:.2s}
-  .btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
-  .btn.toggle-on{background:var(--ok);color:#fff;border-color:var(--ok)}
-  .grid{display:grid;grid-template-columns:260px 1fr;gap:0}
-  nav{border-right:1px solid var(--line);padding:12px;background:#fcfaf7}
-  nav .toc a{display:block;color:#3d2e23;text-decoration:none;padding:8px 10px;border-radius:8px}
-  nav .toc a.active, nav .toc a:hover{background:#efe6db}
-  section{padding:22px 24px}
-  section h2{color:var(--brand);margin-top:0}
-  .card{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff}
-  details{border:1px solid var(--line);border-radius:12px;background:#fff;margin:14px 0}
-  details>summary{cursor:pointer;padding:12px 14px;font-weight:600;list-style:none}
-  details>div{padding:0 14px 12px 14px;border-top:1px dashed var(--line)}
-  figure{margin:14px 0;border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff}
-  figure img{width:100%;height:auto;border-radius:8px;cursor:zoom-in}
-  figcaption{font-size:14px;color:#594531;margin-top:6px}
-  .stepper{display:grid;gap:12px}
-  .steps{display:flex;gap:10px;flex-wrap:wrap}
-  .chip{padding:2px 8px;border-radius:999px;border:1px solid var(--line);background:#faf6f1;font-size:12px}
-  .sequence{display:grid;gap:12px}
-  .sequence .controls{display:flex;gap:8px;justify-content:flex-end}
-  .sequence .stage{border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff;min-height:120px}
-  .hidden{display:none !important}
-  footer{border-top:1px solid var(--line);padding:14px 18px;color:#6b5a48;background:#fcfaf7;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
-  .lightbox{position:fixed;inset:0;display:none;background:rgba(0,0,0,.8);align-items:center;justify-content:center;z-index:50}
-  .lightbox img{max-width:92vw;max-height:92vh;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
-  .link-btn{appearance:none;border:none;background:transparent;color:var(--brand);text-decoration:underline;cursor:pointer}
-  @media (max-width:900px){.grid{grid-template-columns:1fr} nav{border-right:none;border-bottom:1px solid var(--line)} .brand h1{display:none}}
-
-  .intro{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin:16px auto;max-width:1100px}
-  .intro h2{margin:0 0 8px 0;color:var(--brand)}
-  .intro p{margin:.6em 0}
-  .intro-actions{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap}
-
-  .two-col{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:start}
-  .two-col .media figure{margin:0}
-  @media (max-width:900px){.two-col{grid-template-columns:1fr;gap:12px}}
-
-/* --- Ajustes responsive para botones del header --- */
-
-/* Contenedor de los botones */
-
-
-/* Estilo base de cada botón */
-.tab-btn {
-  width: 100% !important;   /* ocupa todo el ancho de su celda */
-  max-width: 220px;         /* límite para que no se estiren demasiado */
-  height: auto !important;
-  padding: 12px 14px !important;
-  font-size: clamp(0.9rem, 1.2vw, 1rem) !important;
-  border-radius: 8px;
-  white-space: nowrap;
-}
-
-/* Ajuste desktop grande: 3 columnas fijas */
-@media (min-width: 1200px) {
-  
-}
-
-/* Ajuste pantallas medianas: 2 columnas */
-@media (max-width: 1199px) and (min-width: 700px) {
-  
-}
-
-/* Ajuste móviles: 1 columna */
-@media (max-width: 699px) {
-  
-}
-
-
-/* Ajuste color más claro para estado activo/focus de botones */
-.tab-btn:active,
-.tab-btn:focus {
-  background-color: #d2a679 !important;
-}
-
-
-/* Fondo negro fijo y letras blancas para los botones */
-.tab-btn {
-  background-color: #000 !important;
-  color: #fff !important;
-}
-
-.tab-btn:hover {
-  background-color: #333 !important;
-  color: #fff !important;
-}
-
-.tab-btn:active,
-.tab-btn:focus {
-  background-color: #555 !important;
-  color: #fff !important;
-}
-
-
-/* Ocultar botones Expandir/Contraer sin tocar el resto */
-#btnExpand, #btnCollapse { display: none !important; }
-
-/* Reducir ancho contenedor de botones cabecera en 15% */
-#headerButtons, .headerButtons, .header-buttons {
-  width: 85% !important;
-  margin: 0 auto;
-}
-
-/* Unificado: contenedor de botones cabecera */
-
-
-/* Agrupar botones de a 2 en columnas verticales */
-
-
-/* Agrupar botones exactamente de a 2 en columnas */
-
-
-/* Reducir ancho del contenedor de botones desde la izquierda */
-
-
-
-.bar{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px 14px;
-  align-items:center;
-  justify-content:flex-start;
-  width:100%;
-  margin:0;
-  padding:4px 0;
-}
-.bar .tab-btn{ flex:1 1 160px; max-width:100%; }
-@media (max-width: 900px){ .bar .tab-btn{ flex:1 1 48%; } }
-@media (max-width: 520px){ .bar .tab-btn{ flex:1 1 100%; } }
-
-
-/* General responsive tweaks */
-img, video, canvas {max-width:100%; height:auto;}
-audio{width:100%;}
-header{flex-wrap:wrap}
-body{word-break:break-word; overflow-x:hidden;}
-main{min-width:0}
-</style>
-
-
-
-<style>
-
-/* --- Responsive fixes for Google Form (Deja tu comentario) --- */
-#comentario-tab .card{overflow:hidden;}
-#comentario-tab iframe{width:100% !important;max-width:100% !important;border:0;display:block;}
-@media (max-width: 900px){
-  #comentario-tab .card{padding:12px 12px !important;}
-}
-@media (max-width: 699px){
-  #comentario-tab iframe{height:2000px !important;} /* extra height for stacked layout on phones */
-}
-
-</style>
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ajetrez">
+  <link rel="manifest" href="manifest.json">
+  <title>Ajetrez — Móvil Fullscreen</title>
+  <style>
+    html, body { height: 100%; margin: 0; padding: 0; background: #111; }
+    body { display: grid; place-items: center; }
+    .app { position: fixed; inset: 0; display: flex; }
+    iframe#game { border: 0; width: 100vw; height: 100dvh; flex: 1; }
+    .overlay {
+      position: fixed; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.85); color: #fff; z-index: 10; text-align: center;
+      padding: 2rem;
+    }
+    .panel {
+      max-width: min(90vw, 580px);
+      border-radius: 16px; padding: 20px 18px; background: #1d1d1d; box-shadow: 0 10px 30px rgba(0,0,0,.5);
+    }
+    .panel h1 { margin: 0 0 .5rem 0; font-size: 1.6rem; }
+    .panel p { opacity: .9; line-height: 1.35; margin: .5rem 0 1rem; }
+    .btn {
+      width: 100%; font-size: 1.2rem; font-weight: 800;
+      border: 0; border-radius: 14px; padding: 14px 16px;
+      background: #fff; color: #111;
+    }
+    .actions { display: grid; gap: 10px; margin-top: .75rem; }
+    .hint { font-size: .9rem; opacity: .7; margin-top: .5rem; }
+    @media (min-width: 981px) {
+      .overlay { display: none; } /* Solo móvil */
+    }
+  </style>
 </head>
 <body>
-<div class="banner">
-<img alt="Banner Ajetrez" src="assets/imagenes/banner-hero-ajetrez.jpg" style="width:100%; border-radius:12px; margin:0 0 20px 0;"/>
-</div>
-<div class="shell">
-<div class="app" id="app">
-<header>
-<div class="brand"><h1 style="display: none;">Ajetrez - El desafío del cambio</h1>
-</div>
-<div class="bar"><button id="btnIrJuego" class="tab-btn" onclick="window.open('https://ajetrezv30pruebas.netlify.app/', '_blank')" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold; background-color:red !important; color:white !important; outline-offset:2px;">Ir al juego</button><button aria-selected="true" class="tab-btn" data-tab="intro" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Introducción</button><button aria-selected="false" class="tab-btn" data-tab="abreviado" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Guía rápida del juego</button><button aria-selected="false" class="tab-btn" data-tab="completo" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Reglas del juego</button>
-<button aria-selected="false" class="tab-btn" data-tab="colabora" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Colabora con el proyecto</button>
-<button aria-selected="false" class="tab-btn" data-tab="comentario" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Deja tu comentario</button><button class="tab-btn" data-tab="novedades" role="tab" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Novedades</button></div>
-<button class="btn" id="btnExpand" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Expandir todo</button><button class="btn" id="btnCollapse" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Contraer todo</button>
-</header>
-</div>
-<div class="grid">
-<nav>
-<div style="margin-bottom:15px; text-align:center;">
-
-<div class="audio-wrap">
-  <div class="audio-label">Descripción del juego</div>
-  <audio controls id="ma-audio" style="width:100%;" playsinline preload="auto"><source src="assets/audio/audio_descripcion_ajetrez.mp3" type="audio/mpeg">Tu navegador no soporta la reproducción de audio.</audio>
-</div>
-
-</div>
-<div class="toc" id="toc"></div>
-<div class="card" style="margin-top:12px max-width: 90%; margin-left:auto; margin-right:auto;">
-<strong>Atajos:</strong>
-<div style="margin-top:6px">
-<span class="chip"><span class="kbd">/</span> buscar</span>
-<span class="chip">↑↓ navegar</span>
-</div>
-</div>
-</nav>
-<main id="content">
-<article data-view="intro">
-<section id="introduccion-tab">
-<h2>Introducción</h2>
-<div class="card"><div class="card">
-<figure style="text-align:center; margin-bottom:15px;">
-<img alt="Tablero Ajetrez" src="assets/imagenes/cabecera_intro.png" style="max-width:100%; height:auto; border-radius:12px;"/>
-</figure>
-<p style="margin-top:20px; text-align:justify; line-height:1.6; color:#3d2e23;">
-<strong>Ajetrez.</strong><br>
-Es un juego de mesa distinto a todo lo visto. Está compuesto por un tablero de secciones variables, que se desplazan horizontalmente.
-Modificando así, la posición de las piezas que participan del juego en momentos clave.
-</p>
-
-<p style="text-align:justify; line-height:1.6; color:#3d2e23;">
-Ajetrez propone una dinámica distinta. Creando una experiencia comparable con la vida misma.
-Donde aún, teniendo una estrategia clara, el entorno puede ser alterado por factores ajenos, que nos obligan a cambiar, utilizando todo nuestro ingenio.
-</p>
-
-<p style="text-align:justify; line-height:1.6; color:#3d2e23;">
-Y es ahí justamente, donde radica la magia de Ajetrez.
-Desafiando a los jugadores a la inmediatez del cambio, ante la modificación del entorno.
-Esta particularidad se asemeja también a la guerra. Donde se debe tomar acción en momentos clave.
-Ya sea para incorporar tropas ocultas, o también, para resguardar a nuestros guerreros al quitarlos del campo de batalla.
-</p>
-
-<p style="text-align:justify; line-height:1.6; color:#3d2e23;">
-A quienes deseen adentrarse en el mundo de Ajetrez.<br>
-Me gustaría decirles.<br>
-Que comiencen a jugar sin prejuicios. Con una mirada de curiosidad y alegría ante lo nuevo. Disfrutando de jugar aprendiendo. Sin miedo a equivocarse. Recordando cuando eran niños.
-</p>
-
-<p style="text-align:justify; line-height:1.6; color:#3d2e23;">
-Y así en el juego, como también en la vida.
-Nunca permitan, que los cambios o las adversidades, les impidan alcanzar sus metas.
-</p>
-
-<p style="text-align:justify; line-height:1.6; color:#3d2e23;">
-Este es mi sueño y quiero compartirlo con ustedes.
-Esperando que disfruten de jugar, tanto como yo disfruté al haberlo creado.
-Muchas gracias por apoyar este proyecto.
-</p>
-
-<div class="card" style="margin-top:25px; padding:20px; text-align:center;">
-
-<p style="margin-bottom:20px; font-size:1.05rem; color:#3d2e23; text-align:center;">
-<strong>No te olvides de compartir el proyecto</strong> con tus conocidos y en tus <strong>redes sociales</strong>.<br/><br/>
-También te agradeceré mucho, si podes apoyar el proyecto con una <strong>donación</strong>, por mínima que sea. (<em>Todo suma</em>).<br/><br/>
-Podes hacerlo desde los botones de <strong>Paypal/Mercadopago</strong> que te dejo a continuación, o desde la sección de <strong>colaboración</strong> de la página.<br/><br/>
-Desde ya, <strong>¡Muchas gracias por tu aporte!</strong>
-</p>
-
-<div style="display:flex; flex-direction:row; gap:40px; justify-content:center; align-items:flex-start; flex-wrap:wrap;">
-  <div style="text-align:center;">
-    <h3>Colabora usando Paypal</h3>
-    <a href="https://www.paypal.com/ncp/payment/PTRWET3UWGEY8" target="_blank" rel="noopener">
-      <img src="assets/imagenes/logo paypal.png" alt="Paypal" style="max-width:180px; height:auto; border-radius:8px;"/>
-    </a>
-  
-</div></div>
-  <div style="text-align:center;">
-    <h3>Colabora usando Mercadopago</h3>
-    <a href="https://link.mercadopago.com.ar/ajetrez" target="_blank" rel="noopener">
-      <img src="assets/imagenes/m pago.jpg" alt="Mercadopago" style="max-width:180px; height:auto; border-radius:8px;"/>
-    </a>
+  <div class="app">
+    <!-- Carga directa del modo simple -->
+    <iframe id="game" src="ajetrez_modo_simple.html" allow="fullscreen *; gamepad *; screen-wake-lock; xr-spatial-tracking" allowfullscreen></iframe>
+    <div class="overlay" id="overlay">
+      <div class="panel">
+        <h1>Modo horizontal</h1>
+        <p>En móviles, hace falta un toque para activar pantalla completa. Se intentará bloquear la orientación en horizontal.</p>
+        <div class="actions">
+          <button class="btn" id="btnGo">Abrir en horizontal (pantalla completa)</button>
+          <button class="btn" id="btnInstall" style="display:none">Instalar como App (recomendado)</button>
+        </div>
+        <div class="hint">Sugerido: instalá la App para abrir siempre a pantalla completa.</div>
+      </div>
+    </div>
   </div>
-</div>
-</div>
+  <script>
+    // PWA: registrar service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(()=>{});
+    }
 
+    // Detectar si ya corre como app instalada
+    function isStandalone() {
+      return window.matchMedia('(display-mode: fullscreen)').matches ||
+             window.matchMedia('(display-mode: standalone)').matches ||
+             window.navigator.standalone === true;
+    }
 
+    const overlay = document.getElementById('overlay');
+    const btnGo = document.getElementById('btnGo');
+    const btnInstall = document.getElementById('btnInstall');
+    const game = document.getElementById('game');
 
+    // Si ya está en modo app, ocultar overlay
+    if (isStandalone()) {
+      overlay.style.display = 'none';
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-</section>
-</article>
-<article class="hidden" data-view="completo">
-<section id="modo-simple">
-<h2>Modo simple</h2>
-<p>En este modo, <strong>sólo el recuadro central del tablero es jugable</strong>. Las partes sobrantes (aunque contengan piezas) <strong>no participan</strong> hasta que sean <strong>ingresadas</strong> mediante el <em>desplazamiento de secciones</em>.</p>
-<figure>
-<img alt="Distribución general del modo simple: recuadro central jugable" src="assets/imagenes/figura1_area_jugable.png"/>
-<figcaption><strong>Figura 1.</strong> Distribución general del modo simple (área jugable).</figcaption>
-</figure>
-</section>
-<section id="distribucion">
-<h2>Distribución de las piezas</h2>
-<p>Por color, el tablero contiene:</p>
-<ul>
-<li><strong>2 reyes</strong></li>
-<li><strong>2 reinas</strong></li>
-<li><strong>4 alfiles</strong>, <strong>4 caballos</strong>, <strong>4 torres</strong></li>
-<li><strong>16 peones</strong></li>
-</ul>
-<p>Las piezas son distribuidas en el recuadro central de la misma manera que en el ajedrez clásico. 
-En los laterales, (si bien ocupan las mismas posiciones entre ellas). Las piezas se colocan desplazadas, 2 secciones hacia abajo en negras y 2 hacia arriba en blancas.</p>
-
-<ul>
-<li>Ajetrez respeta todas las reglas del clásico ajedrez, por lo tanto, se debe jugar de la misma manera y respetando las reglas generales del ajedrez clásico.</li>
-<li>A su vez, añade nuevas reglas, que dependen del modo de juego que se utilice.</li>
-<li>En este modo de juego. (Modo simple). Luego de capturar, se puede elegir entre desplazar o mantener la sección del tablero donde ahora se ubica la pieza que realizó la captura.</li>
-<li>Si decide desplazar. Se desplaza (hacia el lado opuesto al que se encuentra y (solo una vez).</li>
-<li>Luego de la elección de mantener, o desplazar la sección, queda cedido el turno al contrincante.</li>
-<li>El desplazamiento de la sección, puede sacar, o introducir piezas del área jugable.</li>
-</ul><section id="reglas-extra">
-<h2>Función del desplazamiento de las secciones</h2>
-<div class="card" style="background:#fdf6ec; border:1px solid #e7dccf; border-radius:12px; padding:16px; margin-top:12px;">
-<ul>
-<li>Escapar de una captura.</li>
-<li>Alterar las posibles estrategias del oponente.</li>
-<li>Sacar piezas rivales del área jugable.</li>
-<li>Ingresar piezas propias al área jugable.</li>
-<li>También ingresar piezas del oponente para luego intentar capturarlas.</li>
-</ul>
-</div><section id="secuencia">
-<h2>Ejemplo interactivo: Captura + desplazamiento</h2>
-<div class="stepper">
-<div class="steps">
-<span class="chip">Paso 1</span>
-<span class="chip">Paso 2</span>
-<span class="chip">Paso 3</span>
-</div>
-<div class="sequence">
-<div class="stage" id="stage">
-<figure>
-<img alt="Secuencia paso 1" id="seqImg" src="assets/imagenes/captura y desplazamiento 1.PNG"/>
-<figcaption id="seqCap"><strong>Paso 1.</strong> Posición previa: selección del movimiento/captura.</figcaption>
-</figure>
-</div>
-<div class="controls">
-<button class="btn" id="prev" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Anterior</button>
-<button class="btn primary" id="next" style="border-radius:25px; width:120px; height:50px; margin:10px auto; display:block; font-size:0.85em; font-weight:bold;">Siguiente</button>
-</div>
-</div>
-</div>
-<p class="card">Importante: si una pieza sale del recuadro central no queda fuera de juego definitivamente; podría reingresar tras nuevos desplazamientos.</p>
-</section>
-<div class="card" style="background:#fff3f3; border:2px solid #e53935; border-radius:12px; padding:18px; margin-top:16px;">
-<h3 style="color:#b71c1c; margin-top:0;">⚠️ Imposibilidad de desplazamiento de secciones</h3>
-<ul>
-<li>En jaque/mate no hay desplazamientos de las secciones (aun cuando se haya capturado una pieza del oponente que se encuentre en la sección donde está el rey).</li>
-<li>No se pueden desplazar secciones. Cuando esa acción implica, que el recuadro central jugable, “quede sin piezas disponibles de alguno de los dos participantes”.</li>
-</ul>
-</div>
-</article>
-<article class="hidden" data-view="abreviado">
-<section id="resumen">
-<h2>Guía rápida</h2>
-<figure style="text-align:center; margin-bottom:16px;">
-<img alt="Resumen visual: captura + desplazamiento" src="assets/imagenes/figura1_area_jugable.png" style="max-width:90%; height:auto;"/>
-<figcaption>Resumen visual — captura + desplazamiento.</figcaption>
-</figure>
-<ul>
-<li>Ajetrez respeta todas las reglas del clásico ajedrez, por lo tanto, se debe jugar de la misma manera y respetando las reglas generales del ajedrez clásico.</li>
-<li>A su vez, añade nuevas reglas, que dependen del modo de juego que se utilice.</li>
-<li>En este modo de juego. (Modo simple). Luego de capturar, se puede elegir entre desplazar o mantener la sección del tablero donde ahora se ubica la pieza que realizó la captura.</li>
-<li>Si decide desplazar. Se desplaza (hacia el lado opuesto al que se encuentra y (solo una vez).</li>
-<li>Luego de la elección de mantener, o desplazar la sección, queda cedido el turno al contrincante.</li>
-<li>El desplazamiento de la sección, puede sacar, o introducir piezas del área jugable.</li>
-<li>En jaque/mate no hay desplazamientos de las secciones (aun cuando se haya capturado una pieza del oponente que se encuentre en la sección donde está el rey).</li>
-<li>No se pueden desplazar secciones. Cuando esa acción implica, que el recuadro central jugable, “quede sin piezas disponibles de alguno de los dos participantes”.</li>
-</ul></section>
-</article>
-<article class="hidden" data-view="colabora">
-<section id="colabora-tab">
-<h2>Colabora con el proyecto y participaras automáticamente del sorteo de un tablero artesanal de Ajetrez similar al que te mostramos a continuación. (Fotos reales del primer prototipo de Ajetrez construido).</h2>
-
-<div class="card" style=" padding-bottom:40px; margin-bottom:40px;">
-
-<style>
-#colabora-tab > h2 { 
-  font-size: 1.1rem; 
-  line-height: 1.35; 
-  font-weight: 700;
-  margin-bottom: 12px;
-}
-#colabora-tab .aj2-carousel{max-width: 820px;}
-</style>
-<!-- Carrusel sin JS -->
-<div class="aj2-carousel">
-  <input class="aj2-radio" type="radio" name="aj2" id="aj2-1" checked />
-  <input class="aj2-radio" type="radio" name="aj2" id="aj2-2"  />
-  <input class="aj2-radio" type="radio" name="aj2" id="aj2-3"  />
-  <input class="aj2-radio" type="radio" name="aj2" id="aj2-4"  />
-  <input class="aj2-radio" type="radio" name="aj2" id="aj2-5"  />
-  <input class="aj2-radio" type="radio" name="aj2" id="aj2-6"  />
-  <input class="aj2-radio" type="radio" name="aj2" id="aj2-7"  />
-  <input class="aj2-radio" type="radio" name="aj2" id="aj2-8"  />
-  <div class="aj2-viewport">
-      <div class="aj2-slide s1"><img src="assets/imagenes/1.jpg" alt="Prototipo Ajetrez 1"/></div>
-      <div class="aj2-slide s2"><img src="assets/imagenes/2.jpg" alt="Prototipo Ajetrez 2"/></div>
-      <div class="aj2-slide s3"><img src="assets/imagenes/3.jpg" alt="Prototipo Ajetrez 3"/></div>
-      <div class="aj2-slide s4"><img src="assets/imagenes/4.jpg" alt="Prototipo Ajetrez 4"/></div>
-      <div class="aj2-slide s5"><img src="assets/imagenes/5.jpg" alt="Prototipo Ajetrez 5"/></div>
-      <div class="aj2-slide s6"><img src="assets/imagenes/6.jpg" alt="Prototipo Ajetrez 6"/></div>
-      <div class="aj2-slide s7"><img src="assets/imagenes/7.jpg" alt="Prototipo Ajetrez 7"/></div>
-      <div class="aj2-slide s8"><img src="assets/imagenes/8.jpg" alt="Prototipo Ajetrez 8"/></div>
-  </div>
-  <div class="aj2-nav">
-    <label class="aj2-prev p1" for="aj2-8" aria-label="Anterior">&#8249;</label>
-    <label class="aj2-next n1" for="aj2-2" aria-label="Siguiente">&#8250;</label>
-    <label class="aj2-prev p2" for="aj2-1" aria-label="Anterior">&#8249;</label>
-    <label class="aj2-next n2" for="aj2-3" aria-label="Siguiente">&#8250;</label>
-    <label class="aj2-prev p3" for="aj2-2" aria-label="Anterior">&#8249;</label>
-    <label class="aj2-next n3" for="aj2-4" aria-label="Siguiente">&#8250;</label>
-    <label class="aj2-prev p4" for="aj2-3" aria-label="Anterior">&#8249;</label>
-    <label class="aj2-next n4" for="aj2-5" aria-label="Siguiente">&#8250;</label>
-    <label class="aj2-prev p5" for="aj2-4" aria-label="Anterior">&#8249;</label>
-    <label class="aj2-next n5" for="aj2-6" aria-label="Siguiente">&#8250;</label>
-    <label class="aj2-prev p6" for="aj2-5" aria-label="Anterior">&#8249;</label>
-    <label class="aj2-next n6" for="aj2-7" aria-label="Siguiente">&#8250;</label>
-    <label class="aj2-prev p7" for="aj2-6" aria-label="Anterior">&#8249;</label>
-    <label class="aj2-next n7" for="aj2-8" aria-label="Siguiente">&#8250;</label>
-    <label class="aj2-prev p8" for="aj2-7" aria-label="Anterior">&#8249;</label>
-    <label class="aj2-next n8" for="aj2-1" aria-label="Siguiente">&#8250;</label>
-  </div>
-</div>
-<style>
-/* Estilos del carrusel (scoped) */
-#colabora-tab .aj2-carousel{position:relative;max-width:900px;margin:18px auto 28px}
-#colabora-tab .aj2-radio{display:none}
-#colabora-tab .aj2-viewport{position:relative;overflow:hidden;border-radius:14px}
-#colabora-tab .aj2-slide{display:none}
-#colabora-tab .aj2-slide img{display:block;width:85%;height:auto;object-fit:cover;margin:0 auto}
-#colabora-tab .aj2-nav label{
-  display:none;position:absolute;top:50%;transform:translateY(-50%);
-  background:#eee;border-radius:999px;padding:10px 14px;cursor:pointer;font-size:28px;line-height:1;
-}
-#colabora-tab .aj2-prev{left:6px} 
-#colabora-tab .aj2-next{right:6px}
-@media (max-width:640px){
-  #colabora-tab .aj2-nav label{font-size:24px;padding:8px 12px}
-}
-#colabora-tab #aj2-1:checked ~ .aj2-viewport .s1{display:block}
-#colabora-tab #aj2-2:checked ~ .aj2-viewport .s2{display:block}
-#colabora-tab #aj2-3:checked ~ .aj2-viewport .s3{display:block}
-#colabora-tab #aj2-4:checked ~ .aj2-viewport .s4{display:block}
-#colabora-tab #aj2-5:checked ~ .aj2-viewport .s5{display:block}
-#colabora-tab #aj2-6:checked ~ .aj2-viewport .s6{display:block}
-#colabora-tab #aj2-7:checked ~ .aj2-viewport .s7{display:block}
-#colabora-tab #aj2-8:checked ~ .aj2-viewport .s8{display:block}
-#colabora-tab #aj2-1:checked ~ .aj2-nav .p1,#colabora-tab #aj2-1:checked ~ .aj2-nav .n1{display:block}
-#colabora-tab #aj2-2:checked ~ .aj2-nav .p2,#colabora-tab #aj2-2:checked ~ .aj2-nav .n2{display:block}
-#colabora-tab #aj2-3:checked ~ .aj2-nav .p3,#colabora-tab #aj2-3:checked ~ .aj2-nav .n3{display:block}
-#colabora-tab #aj2-4:checked ~ .aj2-nav .p4,#colabora-tab #aj2-4:checked ~ .aj2-nav .n4{display:block}
-#colabora-tab #aj2-5:checked ~ .aj2-nav .p5,#colabora-tab #aj2-5:checked ~ .aj2-nav .n5{display:block}
-#colabora-tab #aj2-6:checked ~ .aj2-nav .p6,#colabora-tab #aj2-6:checked ~ .aj2-nav .n6{display:block}
-#colabora-tab #aj2-7:checked ~ .aj2-nav .p7,#colabora-tab #aj2-7:checked ~ .aj2-nav .n7{display:block}
-#colabora-tab #aj2-8:checked ~ .aj2-nav .p8,#colabora-tab #aj2-8:checked ~ .aj2-nav .n8{display:block}
-</style>
-
-
-
-<!-- Imagen añadida antes del texto -->
-<p>Colabora con el proyecto realizando una donación<br/>(Lo que puedas dar de corazón).</p>
-<p>Con tu aporte, ayudas a impulsar el proyecto, mantener y mejorar la página, entre otras cosas.</p>
-<p>Al hacerlo, quedaras automáticamente participando del sorteo de un tablero artesanal de Ajetrez</p>
-<p>Además, por tu ayuda, difusión y colaboración. Recibirás beneficios exclusivos, como, por ejemplo: enterarte de las novedades y los cambios que implementaremos (antes de que sean publicados).</p>
-<p>También podrás testear los distintos modos de juego de Ajetrez. Porque sí. Hay otros modos de juego. Los cuales haremos públicos a su debido tiempo.</p>
-<p>No te olvides de compartir y sumarte. ¡Muchas gracias por tu aporte!</p>
-<div style="display:flex; flex-direction:row; gap:40px; justify-content:center; align-items:flex-start; margin-top:30px; flex-wrap:wrap;">
-<div style="text-align:center;">
-<h3>Colabora usando Paypal</h3>
-<a href="https://www.paypal.com/ncp/payment/PTRWET3UWGEY8" rel="noopener" target="_blank">
-<img alt="Paypal" src="assets/imagenes/logo paypal.png" style="max-width:180px; height:auto; border-radius:8px;"/>
-</a>
-</div>
-<div style="text-align:center;">
-<h3>Colabora usando Mercadopago</h3>
-<a href="https://link.mercadopago.com.ar/ajetrez" rel="noopener" target="_blank">
-<img alt="Mercadopago" src="assets/imagenes/m pago.jpg" style="max-width:180px; height:auto; border-radius:8px;"/>
-</a>
-</div>
-</div>
-</div>
-</section>
-</article>
-<article class="hidden" data-view="comentario">
-<section id="comentario-tab">
-<style>#comentario-tab #ff-compose{max-width:900px;margin:10px auto;}</style>
-<h2>Deja tu comentario</h2>
-<div class="card" style="padding: 16px 18px; margin-top: 10px;">
-<iframe src="https://docs.google.com/forms/d/e/1FAIpQLScbwPV0PDI1e-c7mLgiqu3koLOlyFiAnL1aCB-kLQ-iiK1xtA/viewform?embedded=true" width="100%" height="1900" frameborder="0" marginheight="0" marginwidth="0" style="width:100%;max-width:100%;border:0;display:block;">Cargando…</iframe>
-</div>
-</section>
-</article>
-<article class="hidden" data-view="novedades"><section id="novedades-tab"><h2>Novedades</h2><div class="card">
-<img alt="Novedades" src="assets/imagenes/a-website-banner-for-the-ajetrez-game-se_jHACSvlvQyyCZmyh7nU3gw_gD23xIdrRxGGsJMAbOSPTw.jpeg" style="max-width:70%; height:auto; display:block; margin:0 auto;" style="max-width:100%; border-radius:12px;"/>
-<p style="margin-top:20px; text-align:justify; line-height:1.6; color:#3d2e23;">
-Te comentamos algunas de las mejoras en las que estamos trabajando y también algunos cambios que implementaremos en la versión 3.0 del juego. (actualmente estamos en la versión 2.5) actualizada hoy 3 de septiembre de 2025. (Más abajo podés ver los cambios y mejoras que realizamos en esta versión).
-</p>
-<p style="text-align:justify; line-height:1.6; color:#3d2e23;">
-Estamos trabajando para mejorar el bot actual (ya que es solo un bot muy básico). La idea es que puedas elegir entre 3 niveles de bot por dificultad: <strong>Fácil, intermedio y difícil</strong>.
-</p>
-<p style="text-align:justify; line-height:1.6; color:#3d2e23;">
-Como segundo cambio importante, estamos trabajando para una nueva versión del juego en la cual se podrá jugar de manera online contra otros usuarios. 
-Para esto, no solo hay que hacer un importante trabajo de programación, sino que, además, hay que realizar una importante inversión. Por este motivo, te pedimos que apoyes el proyecto con alguna donación. (No importa cuánto sea), todo suma y ayuda.
-</p>
-<p style="text-align:justify; line-height:1.6; color:#3d2e23;">
-La idea del proyecto es que sea libre y gratuito para el disfrute de todos. 
-Pero lamentablemente, nada es gratis y siempre depende de alguna manera de la parte económica. Por eso, es necesario pedir a los usuarios que ayuden a sostener el proyecto con alguna donación. (Los que realicen donaciones participaran del sorteo de un juego físico de Ajetrez artesanal y fabricado por su creador).
-</p>
-<p style="text-align:justify; line-height:1.6; color:#3d2e23;">
-Por el momento, te adelantamos estos cambios que se vienen y que esperamos lograr lo antes posible para el disfrute de todos. Desde ya, muchas gracias.
-</p>
-
-<h2 style="color:red; margin-top:30px;">Novedades implementadas en la versión 2.5 (Aún en fase de pruebas y mejoras) (01/09/2025)</h2>
-<ul style="line-height:1.6; color:#3d2e23;">
-  <li>Se Modificó el estilo completo del juego</li>
-  <li>Se cambió la disposición de las piezas de los casilleros laterales, logrando así una mejor dinámica del juego</li>
-  <li>Se mejoró la habilidad del bot (aunque sigue siendo un bot de habilidad básica para principiantes)</li>
-  <li>Se realzó la visibilidad del recuadro central 8x8 acentuando su importancia como sección jugable</li>
-  <li>Se agregaron sonidos a los movimientos y acciones del juego</li>
-  <li>Se corrigieron bugs de movimientos y reglas de juego</li>
-  <li>Se agregó un menú principal</li>
-  <li>Se aumentó el tamaño de piezas y tablero</li>
-  <li>Se mejoró el tiempo de acción del bot y sus carteles con ejecución posterior.</li>
-  <li>Inicio por defecto en “vs Bot”, con “1v1 local” como opción secundaria.</li>
-  <li>Indicador tipo “pill” negro con texto blanco + botón único para alternar modo.</li>
-  <li>Reset limpio al cambiar de modo.</li>
-  <li>Banner superior más angosto</li>
-  <li>Controles y botones más pequeños y estilizados</li>
-</ul>
-</div></section></article></main>
-</div>
-</div>
-<div aria-hidden="true" class="lightbox" id="lightbox">
-<img alt="" id="lightboxImg"/>
-</div>
-<script>
-// Tabs
-const tabs = document.querySelectorAll('.tab-btn');
-const views = document.querySelectorAll('article[data-view]');
-tabs.forEach(btn=>btn.addEventListener('click',()=>{
-  tabs.forEach(b=>b.setAttribute('aria-selected','false'));
-  btn.setAttribute('aria-selected','true');
-  const k=btn.dataset.tab;
-  views.forEach(v=>v.classList.toggle('hidden', v.dataset.view!==k));
-  buildTOC();
-}));
-
-// Expand/collapse all details with active color toggle
-const btnExpand=document.getElementById('btnExpand');
-const btnCollapse=document.getElementById('btnCollapse');
-function scopeRoot(){return document.querySelector('article:not(.hidden)');}
-btnExpand.onclick=()=>{
-  scopeRoot().querySelectorAll('details').forEach(d=>d.open=true);
-  btnExpand.classList.add('toggle-on');
-  btnCollapse.classList.remove('toggle-on');
-};
-btnCollapse.onclick=()=>{
-  scopeRoot().querySelectorAll('details').forEach(d=>d.open=false);
-  btnCollapse.classList.add('toggle-on');
-  btnExpand.classList.remove('toggle-on');
-};
-
-// TOC
-const tocEl = document.getElementById('toc');
-function buildTOC(){
-  tocEl.innerHTML='';
-  const root = scopeRoot();
-  root.querySelectorAll('section[id] > h2').forEach(h=>{
-    const a=document.createElement('a');
-    a.textContent=h.textContent;
-    a.href='#'+h.parentElement.id;
-    tocEl.appendChild(a);
-  });
-}
-buildTOC();
-
-// Highlight current TOC item
-function onScroll(){
-  const sections = scopeRoot().querySelectorAll('section[id]');
-  let current=null;
-  sections.forEach(s=>{
-    const top=s.getBoundingClientRect().top;
-    if(top<150) current=s.id;
-  });
-  tocEl.querySelectorAll('a').forEach(a=>a.classList.toggle('active', a.getAttribute('href')==='#'+current));
-}
-document.addEventListener('scroll', onScroll, {passive:true});
-
-// Lightbox
-const lb=document.getElementById('lightbox');
-const lbImg=document.getElementById('lightboxImg');
-function bindLightbox(scope=document){ 
-  scope.querySelectorAll('figure img').forEach(img=>{
-    img.addEventListener('click',()=>{lb.style.display='flex'; lbImg.src=img.src;});
-  });
-}
-bindLightbox();
-lb.addEventListener('click',()=>{lb.style.display='none'; lbImg.src='';});
-
-// Stepper sequence
-const steps=[
-  {src:"assets/imagenes/captura y desplazamiento 1.PNG", cap:"<strong>Paso 1.</strong> Posición previa: selección del movimiento/captura."},
-  {src:"assets/imagenes/captura y desplazamiento 2.PNG", cap:"<strong>Paso 2.</strong> Tras la captura, preparación para desplazar la sección."},
-  {src:"assets/imagenes/captura y desplazamiento 3.PNG", cap:"<strong>Paso 3.</strong> Sección desplazada; pieza rival fuera del área jugable."}
-];
-let idx=0;
-const seqImg=document.getElementById('seqImg');
-const seqCap=document.getElementById('seqCap');
-document.getElementById('prev').onclick=()=>{idx=(idx+steps.length-1)%steps.length; render();};
-document.getElementById('next').onclick=()=>{idx=(idx+1)%steps.length; render();};
-function render(){seqImg.src=steps[idx].src; seqCap.innerHTML=steps[idx].cap;}
-
-// Footer quick config for "Volver al juego"
-document.getElementById('editarEnlace').addEventListener('click', (e)=>{
-  e.preventDefault();
-  const url = prompt("Pega la URL de tu juego (o ruta relativa). Ej: ./ajetrez.html");
-  if(url){ document.getElementById('volver').setAttribute('href', url); }
-});
-
-// Sync intro button with main "Ir al juego" link
-(function(){
-  const headerLink = document.getElementById('volver'); // anchor in header
-  const introBtn = document.getElementById('introIr');
-  const editLink = document.getElementById('editarEnlace');
-  if(introBtn && headerLink){
-    introBtn.addEventListener('click', (e)=>{
+    // Soporte de instalación (Android/Chrome)
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
-      const href = headerLink.getAttribute('href') || '#';
-      if(href === '#'){
-        if(editLink){ editLink.click(); }
-      }else{
-        window.location.href = href;
+      deferredPrompt = e;
+      btnInstall.style.display = 'block';
+    });
+    btnInstall.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice.catch(()=>{});
+      deferredPrompt = null;
+    });
+
+    async function enterFS(target) {
+      const el = target || document.documentElement;
+      let p;
+      try { p = el.requestFullscreen?.(); } catch(e){}
+      if (!p) try { p = el.webkitRequestFullscreen?.(); } catch(e){}
+      if (!p) try { p = el.mozRequestFullScreen?.(); } catch(e){}
+      if (p?.catch) { p.catch(()=>{}); }
+      try { await screen.orientation.lock('landscape'); } catch(e){}
+    }
+
+    // Si no es app instalada, pedir gesto para FS
+    if (!isStandalone()) {
+      // Intento inicial (algunos navegadores permiten si hubo gesto previo de navegación)
+      setTimeout(()=> enterFS(document.documentElement), 0);
+      // Mostrar overlay hasta que el usuario toque
+      overlay.style.display = 'flex';
+    }
+
+    function done() { overlay.style.display = 'none'; }
+    btnGo.addEventListener('click', async () => {
+      await enterFS(document.documentElement);
+      done();
+    });
+
+    // Toque en cualquier lado también intenta FS (una vez)
+    window.addEventListener('touchend', async () => {
+      if (overlay.style.display !== 'none') {
+        await enterFS(document.documentElement);
+        done();
+      }
+    }, { once: true, passive: true });
+
+    // Si sale de FS en navegador, volver a mostrar el overlay
+    function fsActive(){ return document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement; }
+    document.addEventListener('fullscreenchange', () => {
+      if (!fsActive() && !isStandalone()) {
+        overlay.style.display = 'flex';
       }
     });
+  </script>
+<style id="hide-rotate-overlays">
+  /* Forzar oculto cualquier cartel de rotación/orientación, sin afectar elementos normales */
+  [id*="rotate-overlay"], [class*="rotate-overlay"],
+  [id*="rotateNotice"], [class*="rotateNotice"],
+  [id*="rotatePhone"], [class*="rotatePhone"],
+  [id*="aj-rotate"], [class*="aj-rotate"],
+  [id*="orientation-overlay"], [class*="orientation-overlay"],
+  [id*="portrait-overlay"], [class*="portrait-overlay"],
+  [id*="force-portrait"], [class*="force-portrait"],
+  [id*="forcePortrait"], [class*="forcePortrait"],
+  [id*="rotate"], [class*="rotate"],
+  [id*="portrait"], [class*="portrait"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
-})();
-
-</script>
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const linkJuego = document.querySelector('a[href*="juego"]');
-    if (linkJuego && navigator.userAgent.indexOf("Windows") !== -1) {
-      linkJuego.setAttribute("target", "_blank");
-    }
-  });
-</script>
-<script>
-// Carrusel Colabora
-(function(){
-  const pics = [
-    {src:"assets/img/colabora/assets/imagenes/1.jpg", cap:"Vista 1"},
-    {src:"assets/img/colabora/assets/imagenes/2.jpg", cap:"Vista 2"},
-    {src:"assets/img/colabora/assets/imagenes/3.jpg", cap:"Vista 3"},
-    {src:"assets/img/colabora/assets/imagenes/4.jpg", cap:"Vista 4"},
-    {src:"assets/img/colabora/assets/imagenes/5.jpg", cap:"Vista 5"},
-    {src:"assets/img/colabora/assets/imagenes/6.jpg", cap:"Vista 6"},
-    {src:"assets/img/colabora/assets/imagenes/7.jpg", cap:"Vista 7"},
-    {src:"assets/img/colabora/assets/imagenes/8.jpg", cap:"Vista 8"}
-  ];
-  let i = 0;
-  const img = document.getElementById('colaboraImg');
-  const cap = document.getElementById('colaboraCap');
-  const prev = document.getElementById('colaboraPrev');
-  const next = document.getElementById('colaboraNext');
-  function paint(){ img.src = pics[i].src; cap.textContent = pics[i].cap; }
-  if (prev && next && img){
-    prev.addEventListener('click', ()=>{ i = (i + pics.length - 1) % pics.length; paint(); });
-    next.addEventListener('click', ()=>{ i = (i + 1) % pics.length; paint(); });
-  }
-  document.querySelectorAll('[data-colabora-jump]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{ const n = parseInt(btn.getAttribute('data-colabora-jump'),10)-1; if(!isNaN(n)){ i=n; paint(); } });
-  });
-  // Reusar lightbox global si existe
-  const lb = document.getElementById('lightbox');
-  const lbImg = document.getElementById('lightboxImg');
-  if (lb && lbImg && img){
-    img.addEventListener('click', ()=>{ lb.style.display='flex'; lbImg.src = img.src; });
-  }
-})();
-</script>
-<footer style="background:#fff; padding:20px 10px; text-align:center; margin-top:40px;">
-<div class="shell" style="max-width:1100px; margin:0 auto;">
-<div style="text-align:center; margin-bottom:15px;"></div><small style="display:block; line-height:1.6;">
-<strong>Ajetrez - El desafío del cambio.</strong><br/>
-      Todos los derechos reservados. Prohibida su venta, reproducción y distribución, sin el consentimiento del autor. Ya sea en formato físico o digital.<br/>
-      Cualquier modo de juego, reglas, o variaciones que puedan desprenderse de Ajetrez, son inherentes a la idea general del mismo y no pueden ser utilizados para otro tipo de juegos, sin la autorización correspondiente.
-      <br/><br/>
-      El creador del juego, pone a disposición este sitio online, para compartir y dar a conocer su creación y el proyecto. Los usuarios pueden compartir y usar el juego libre y gratuitamente en este sitio. El juego solo puede ser utilizado, o comercializado por terceros, con la autorización de su creador.
-      <br/>
-      Si desea contactar con su creador envíe un e-mail a: 
-      <a href="mailto:inventorcesarivan@gmail.com">inventorcesarivan@gmail.com</a>
-</small>
-</div>
-</footer>
-<script>
-  (function(){
-    function playOnce(){
-      var audio = document.getElementById('ma-audio');
-      if (audio) {
-        audio.play().catch(function(e){
-          console.log('El navegador bloqueó el autoplay hasta interacción:', e);
-        });
-        document.removeEventListener('click', playOnce);
-      }
-    }
-    document.addEventListener('click', playOnce, { once: true, passive: true });
-  })();
-</script>
-<script>
-// Activar pestaña según el hash (p.ej. #colabora-tab) al entrar desde otra página
-(function(){
-  function mapHashToTab(hash){
-    if(!hash) return null;
-    hash = hash.replace(/^#/, '').toLowerCase();
-    if(hash.startsWith('colabora')) return 'colabora';
-    if(hash.startsWith('comentario') || hash.startsWith('comentarios')) return 'comentario';
-    if(hash.startsWith('introduccion')) return 'intro';
-    if(hash.startsWith('resumen') || hash.startsWith('abreviado')) return 'abreviado';
-    if(hash.startsWith('completo') || hash.startsWith('modo-') || hash.startsWith('reglas')) return 'completo';
-    return null;
-  }
-  function ensureTabFromHash(){
-    var tab = mapHashToTab(window.location.hash);
-    if(!tab) return;
-    var btn = document.querySelector('.tab-btn[data-tab="'+tab+'"]');
-    if(btn){
-      // Simular clic para que todo el sistema (TOC, etc.) se sincronice
-      btn.click();
-      // Intentar hacer scroll al elemento exacto si existe
-      var target = document.getElementById(window.location.hash.replace('#',''));
-      if(target && typeof target.scrollIntoView === 'function'){
-        setTimeout(function(){ target.scrollIntoView({behavior:'smooth', block:'start'}); }, 50);
-      }
-    }
-  }
-  window.addEventListener('hashchange', ensureTabFromHash);
-  document.addEventListener('DOMContentLoaded', ensureTabFromHash);
-  // Llamar una vez adicional por si los estilos tardan
-  setTimeout(ensureTabFromHash, 200);
-})();
-</script>
-
-
-<div id="version-banner">
-  <a href="https://ajetrezv30pruebas.netlify.app/" target="_blank" rel="noopener"
-     style="color:white; text-decoration:none; margin-right:12px;" data-pause-audio="true">
-    🚀 Prueba la nueva versión del juego: <strong>Ajetrez Versión 3.0</strong>
-  </a>
-  <button id="close-banner" style="background:#fff; color:red; border:none; border-radius:4px; padding:2px 6px; cursor:pointer; font-size:0.8rem;">
-    Cerrar
-  </button>
-</div>
-<script>
-(function(){
-  function attach(){
-    var closeBtn = document.getElementById('close-banner');
-    if (closeBtn){
-      closeBtn.addEventListener('click', function(ev){
-        ev.preventDefault();
-        var b = document.getElementById('version-banner');
-        if (b){ b.style.display = 'none'; }
-      });
-    }
-  }
-  if (document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', attach);
-  } else {
-    attach();
-  }
-})();
-</script>
-<style>
-#version-banner{
-  position: fixed !important;
-  top: 420px !important;
-  left: 50% !important;
-  transform: translateX(-55%) !important;
-  background: red !important;
-  color: #fff !important;
-  padding: 12px 18px !important;
-  border-radius: 10px !important;
-  font-weight: 800 !important;
-  font-size: 1rem !important;
-  z-index: 2147483647 !important;
-  box-shadow: 0 12px 28px rgba(0,0,0,.35) !important;
-  animation: blink 1s infinite !important;
-  pointer-events: auto !important;
-  white-space: nowrap !important;
-  display:flex; align-items:center; gap:6px;
-}
-#version-banner a{ color:#fff !important; text-decoration:none !important; }
-@keyframes blink{ 0%{opacity:1} 50%{opacity:.2} 100%{opacity:1} }
-@media (max-width: 699px){
-  #version-banner{
-    font-size: .9rem !important;
-    padding: 8px 12px !important;
-    top: 140px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-  }
-}
 </style>
-
-<style>
-#version-banner{
-  position: fixed !important;
-  top: 420px !important;
-  left: 50% !important;
-  transform: translateX(-55%) !important;
-  background: red !important;
-  color: #fff !important;
-  padding: 12px 18px !important;
-  border-radius: 10px !important;
-  font-weight: 800 !important;
-  font-size: 1rem !important;
-  z-index: 2147483647 !important;
-  box-shadow: 0 12px 28px rgba(0,0,0,.35) !important;
-  animation: blink 1s infinite !important;
-  pointer-events: auto !important;
-  white-space: nowrap !important;
-}
-#version-banner a{ color:#fff !important; text-decoration:none !important; }
-@keyframes blink{ 0%{opacity:1} 50%{opacity:.2} 100%{opacity:1} }
-@media (max-width: 699px){
-  #version-banner{
-    font-size: .9rem !important;
-    padding: 8px 12px !important;
-    top: 140px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-  }
-}
-</style>
-
+  <script src="<script>window.AJ_SF_URL = '/engine/stockfish.js';</script>
+  engine/aj-oraculo.js"></script>
 
 <script>
-// --- Autoplay (robusto) y pausa en enlaces/botones del juego ---
+// Failsafe loader para el Oráculo en Netlify
 (function(){
-  var audio = document.getElementById('ma-audio');
-  if (!audio) return;
-
-  // Intentos proactivos de reproducción
-  function tryPlay() {
-    if (!audio) return;
-    // Asegurar flags útiles
-    audio.autoplay = true;
-    audio.playsInline = true;
-    audio.muted = false;
-    audio.volume = 1.0;
-    var p = audio.play();
-    if (p && typeof p.then === 'function') {
-      p.catch(function(err){
-        // Algunos navegadores requieren interacción: ya hay un fallback abajo
-        // console.log('Autoplay bloqueado, esperando interacción...', err);
-      });
-    }
+  if (window.__AJ_ORACULO_LOADED__) return;
+  function add(src, cb){
+    var s = document.createElement('script');
+    s.src = src; s.async = true;
+    s.onload = function(){ window.__AJ_ORACULO_LOADED__=true; cb && cb(true, src); };
+    s.onerror = function(){ cb && cb(false, src); };
+    document.head.appendChild(s);
   }
-
-  if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    setTimeout(tryPlay, 60);
-  } else {
-    document.addEventListener('DOMContentLoaded', function(){ setTimeout(tryPlay, 60); });
-  }
-  // Reintento cuando la pestaña vuelve a primer plano
-  document.addEventListener('visibilitychange', function(){
-    if (!document.hidden) setTimeout(tryPlay, 60);
-  });
-
-  // Fallback: al primer gesto de usuario
-  function userKick(){
-    tryPlay();
-    document.removeEventListener('click', userKick, {passive:true});
-    document.removeEventListener('touchstart', userKick, {passive:true});
-    document.removeEventListener('keydown', userKick, {passive:true});
-  }
-  try {
-    document.addEventListener('click', userKick, {once:true, passive:true});
-    document.addEventListener('touchstart', userKick, {once:true, passive:true});
-    document.addEventListener('keydown', userKick, {once:true, passive:true});
-  } catch (_) {
-    // Navegadores antiguos sin opciones
-    document.addEventListener('click', userKick, true);
-    document.addEventListener('touchstart', userKick, true);
-    document.addEventListener('keydown', userKick, true);
-  }
-
-  // --- Pausar audio al salir hacia el juego (botón y banner/links) ---
-  function pauseAudio(){ if (audio && !audio.paused) { try { audio.pause(); } catch(_){} } }
-
-  // Botón "Ir al juego"
-  var ir = document.getElementById('btnIrJuego');
-  if (ir) {
-    ir.addEventListener('click', function(ev){
-      pauseAudio();
-      // Mantener el comportamiento de abrir en nueva pestaña
-      try{ if (audio){ audio.pause(); audio.currentTime = 0; audio.src=''; } }catch(_){}
-      window.open("https://ajetrezv30pruebas.netlify.app/", "_blank");
+  // Fuerza ruta del Worker absoluto en raíz
+  window.AJ_SF_URL = '/engine/stockfish.js';
+  // Intenta cargar oráculo con ruta absoluta primero
+  add('/engine/aj-oraculo.js', function(ok1){
+    if (ok1) return;
+    // Fallback relativo por si el sitio está en subcarpeta
+    add('engine/aj-oraculo.js', function(ok2){
+      if (!ok2) {
+        console.warn('[Ajetrez] No se pudo cargar el oráculo desde /engine/aj-oraculo.js ni engine/aj-oraculo.js');
+      }
     });
-  }
-
-  // Cualquier elemento marcado con data-pause-audio o enlaces que apunten al juego
-  document.querySelectorAll('[data-pause-audio], a[href*="ajetrezv30pruebas"]').forEach(function(el){
-    el.addEventListener('click', pauseAudio);
   });
 })();
-</script>
-
-
-<script>
-(function(){
-  var audio = document.getElementById('ma-audio');
-  if (!audio) return;
-
-  function pauseAudio(){ if (!audio.paused) try { audio.pause(); } catch(_){} }
-
-  // Pausar cuando la página queda en segundo plano (cambia de pestaña/abre el juego en otra)
-  document.addEventListener('visibilitychange', function(){
-    if (document.hidden) pauseAudio();
-  });
-  // iOS Safari dispara 'pagehide' al cambiar de pestaña / abrir en nueva
-  window.addEventListener('pagehide', pauseAudio);
-
-  // Pausar lo antes posible en móviles (touch/pointer)
-  function armEarlyPause(sel){
-    document.querySelectorAll(sel).forEach(function(el){
-      ['touchstart','pointerdown','mousedown'].forEach(function(evt){
-        el.addEventListener(evt, pauseAudio, {passive:true});
-      });
-      // redundancia por si algún navegador no emite los anteriores
-      el.addEventListener('click', pauseAudio);
-    });
-  }
-
-  // Botón y enlaces relevantes
-  armEarlyPause('#btnIrJuego');
-  armEarlyPause('[data-pause-audio]');
-  armEarlyPause('a[href*="ajetrezv30pruebas"]');
-})();
-</script>
-
-
-<script>
-document.addEventListener("DOMContentLoaded", function(){
-  const audio = document.querySelector("audio");
-  function detenerAudio(){
-    if(audio){
-      audio.pause();
-      audio.currentTime = 0;
-      audio.removeAttribute("src");
-      audio.load();
-    }
-  }
-  // Detectar click en cualquier botón o enlace hacia el juego
-  document.querySelectorAll('a[href*="ajetrez"], button#btnIrJuego').forEach(el => {
-    el.addEventListener("click", detenerAudio);
-  });
-});
 </script>
 
 </body>
