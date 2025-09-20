@@ -3157,7 +3157,11 @@ body[data-theme="noche"] .regv2-btn{
 <img alt="PayPal" src="logo paypal.png"/>
 </a>
 </div>
-<button aria-controls="megaPanel" aria-expanded="false" class="btn" id="btnMegaMenu" type="button">Menú</button><div class="right-ctrls" id="rightControls"><button class="btn small" id="btnRestartBR" type="button">Reiniciar</button><button class="btn small" id="btnFSBR" type="button">Pantalla completa</button></div></div></div><script>
+<button aria-controls="megaPanel" aria-expanded="false" class="btn" id="btnMegaMenu" type="button">Menú</button><div class="right-ctrls" id="rightControls"><button class="btn small" id="btnRestartBR" type="button">Reiniciar</button><button class="btn small" id="btnFSBR" type="button">Pantalla completa</button><button id="btn-online-amenaza" class="btn small" title="Jugar online (amenaza)">Online</button>
+<div id="online-amenaza-status" aria-live="polite"
+     style="display:inline-block;margin-left:10px;padding:4px 10px;border-radius:12px;
+            background:rgba(0,0,0,.7);color:#fff;border:1px solid #ffcc00;
+            font-size:13px;line-height:1.1;max-width:50vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div></div></div></div><script>
 // --- Audio FX setup ---
 (function(){
   function make(src){ try{ const a = new Audio(src); a.preload='auto'; a.volume = 0.85; return a; }catch(_){ return null; } }
@@ -4916,7 +4920,8 @@ window.AJ_RULES.legalShift = function(row, target, boardRef, offsRef){
       const labelMap = { 'pvp-local':'Player vs player (local)', 'bot':'Versus Bot', 'bot-vs-bot':'Bot versus bot (demo)', 'online':'Modo Online' };
       // ► AJ: abrir selector flotante para modos con bot desde el menú
       if (mode === 'bot' || mode === 'bot-vs-bot') {
-        try { window.__AJ_LAST_PENDING_MODE__ = mode; } catch(_){}
+        try {
+      setStatus('⏳ Cargando /web/online.js…'); window.__AJ_LAST_PENDING_MODE__ = mode; } catch(_){}
         if (typeof window.openBotChooser === 'function') {
           window.openBotChooser(mode);
         } else {
@@ -13063,35 +13068,57 @@ function showVeteranBanner(color){
 })();
 </script>
 
-  <script src="<script>window.AJ_SF_URL = '/engine/stockfish.js';</script>
-  engine/aj-oraculo.js"></script>
+<script type="module">
+  const VARIANT = 'amenaza';
+  const SUPABASE_URL = 'https://unyomyoojfjatxrcknqu.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVueW9teW9vamZqYXR4cmNrbnF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgzNjQyNTgsImV4cCI6MjA3Mzk0MDI1OH0.ob5n4Ae7UecIQ7K4IlYMkxOgoDgZxg2VcgTFwKHOgsA';
+  const BTN_ID = 'btn-online-amenaza';
+  const STATUS_ID = 'online-amenaza-status';
 
-<script>
-// Failsafe loader para el Oráculo en Netlify
-(function(){
-  if (window.__AJ_ORACULO_LOADED__) return;
-  function add(src, cb){
-    var s = document.createElement('script');
-    s.src = src; s.async = true;
-    s.onload = function(){ window.__AJ_ORACULO_LOADED__=true; cb && cb(true, src); };
-    s.onerror = function(){ cb && cb(false, src); };
-    document.head.appendChild(s);
+  const $btn = document.getElementById(BTN_ID);
+  const $status = document.getElementById(STATUS_ID);
+  const setStatus = (t) => { if ($status) { $status.textContent = t; $status.title = t; $status.style.display='inline-block'; } console.log('[online-'+VARIANT+']', t); };
+
+  let online = null;
+  async function ensureOnline() {
+    if (online) return online;
+    try {
+      const mod = await import('./web/online.js');
+      setStatus('✅ Cliente cargado. Conectando…');
+      online = await mod.initOnline({
+        supabaseUrl: SUPABASE_URL,
+        supabaseAnonKey: SUPABASE_ANON_KEY,
+        variant: VARIANT,
+        getLocalState: () => window.Ajetrez?.exportState?.() ?? {},   // tu motor
+        applyRemoteEvent: (ev) => { try { window.Ajetrez?.applyEvent?.(ev) } catch(e) { console.error(e) } },
+        onStatus: (s) => setStatus(s.type)
+      });
+      setStatus('✅ Conectado (auth ok).');
+      return online;
+    } catch (e) {
+      setStatus('❌ No se pudo cargar /web/online.js o conectar.');
+      console.error(e);
+      throw e;
+    }
   }
-  // Fuerza ruta del Worker absoluto en raíz
-  window.AJ_SF_URL = '/engine/stockfish.js';
-  // Intenta cargar oráculo con ruta absoluta primero
-  add('/engine/aj-oraculo.js', function(ok1){
-    if (ok1) return;
-    // Fallback relativo por si el sitio está en subcarpeta
-    add('engine/aj-oraculo.js', function(ok2){
-      if (!ok2) {
-        console.warn('[Ajetrez] No se pudo cargar el oráculo desde /engine/aj-oraculo.js ni engine/aj-oraculo.js');
-      }
-    });
-  });
-})();
-</script>
 
+  if ($btn) {
+    $btn.addEventListener('click', async () => {
+      try {
+        const svc = await ensureOnline();
+        const g = await svc.quickMatch();
+        await svc.subscribeToGame(g.id);
+        setStatus(`🎮 Partida ${g.code} — ${g.status}`);
+      } catch (e) { /* ya logueado arriba */ }
+    });
+  }
+
+  // Hooks que tu motor debe llamar tras validar la acción local
+  window.onLocalMove = (move) => online?.send({ kind: 'move', payload: move });
+  window.onSectionShift = (shift) => online?.send({ kind: 'shift', payload: shift });
+  window.onPromote = (prom) => online?.send({ kind: 'promote', payload: prom });
+</script>
+<div style="position:fixed;top:0;left:0;background:#111;color:#0f0;padding:2px 6px;font:12px monospace;z-index:99999;">build: RELATIVE</div>
 </body>
 <!-- AJETREZ: Overlay de reproducción (bloqueo del tablero) v2 -->
 <style id="aj-replay-glass-css">
